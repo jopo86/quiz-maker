@@ -3,7 +3,7 @@
 #include "Question.h"
 #include <vector>
 
-class MultipleChoiceQuestion : Question
+class MultipleChoiceQuestion : public Question
 {
 private:
 	std::vector<std::string> choices;
