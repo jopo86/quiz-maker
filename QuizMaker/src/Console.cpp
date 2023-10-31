@@ -11,6 +11,11 @@ void Console::SetColor(int color)
 {
 	SetConsoleTextAttribute(hConsole, color);
 }
+
+void Console::Reset() {
+	SetConsoleTextAttribute(hConsole, WHITE);
+	std::cout << "\033[0m";
+}
 #else
 void Console::Clear() {
 	system("clear");
@@ -18,6 +23,10 @@ void Console::Clear() {
 void Console::SetColor(int color)
 {
 	std::cout << "\033[" << color << ";1m";
+}
+
+void Console::Reset() {
+	std::cout << "\033[0m";
 }
 #endif
 
@@ -28,8 +37,4 @@ void Console::SetItalic() {
 
 void Console::SetUnderlined() {
 	std::cout << "\033[4m";
-}
-
-void Console::Reset() {
-	std::cout << "\033[0m";
 }

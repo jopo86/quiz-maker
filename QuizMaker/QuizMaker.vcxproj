@@ -143,10 +143,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\MultipleChoiceQuestion.cpp" />
+    <ClCompile Include="src\Question.cpp" />
     <ClCompile Include="src\Console.cpp" />
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\MultipleChoiceQuestion.h" />
+    <ClInclude Include="src\Question.h" />
     <ClInclude Include="src\Console.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
