@@ -6,12 +6,9 @@
 
 class QuizTaker
 {
-private:
-	Quiz quiz;
-
 public:
-	QuizTaker(Quiz quiz);
+	static void Take(Quiz& quiz);
 
-	void takeQuiz();
-	void editQuiz();
+private:
+	
 };

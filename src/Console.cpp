@@ -1,7 +1,5 @@
 #include "Console.h"
 
-using namespace Console;
-
 #ifdef _WIN32
 void Console::Clear() {
 	system("CLS");
