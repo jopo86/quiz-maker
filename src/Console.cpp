@@ -7,7 +7,12 @@ void Console::Clear() {
 
 void Console::SetColor(int color)
 {
+	if (color == NULL) {
+		Reset();
+		return;
+	}
 	SetConsoleTextAttribute(hConsole, color);
+	currentColor = color;
 }
 
 void Console::Reset() {
@@ -20,7 +25,12 @@ void Console::Clear() {
 }
 void Console::SetColor(int color)
 {
+	if (color == NULL) {
+		Reset();
+		return;
+	}
 	std::cout << "\033[" << color << ";1m";
+	currentColor = color;
 }
 
 void Console::Reset() {
@@ -28,6 +38,9 @@ void Console::Reset() {
 }
 #endif
 
+int Console::GetColor() {
+	return currentColor;
+}
 
 void Console::SetItalic() {
 	std::cout << "\033[3m";
