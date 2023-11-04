@@ -34,6 +34,10 @@ void Quiz::addQuestions(std::vector<Question> questions) {
 	}
 }
 
+void Quiz::setName(std::string name) {
+	this->name = name;
+}
+
 std::vector<Question> Quiz::getQuestions() {
 	return questions;
 }

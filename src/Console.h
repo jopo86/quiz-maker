@@ -28,7 +28,7 @@ namespace Console
 	static const int MAGENTA = 35;
 #endif
 
-	static int currentColor = NULL;
+	static int currentColor = -1;
 
 	void Clear();
 	void SetColor(int color);

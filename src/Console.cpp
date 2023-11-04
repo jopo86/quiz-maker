@@ -7,7 +7,7 @@ void Console::Clear() {
 
 void Console::SetColor(int color)
 {
-	if (color == NULL) {
+	if (color == -1) {
 		Reset();
 		return;
 	}
@@ -25,7 +25,7 @@ void Console::Clear() {
 }
 void Console::SetColor(int color)
 {
-	if (color == NULL) {
+	if (color == -1) {
 		Reset();
 		return;
 	}

@@ -22,6 +22,7 @@ public:
 	void addQuestion(Question question);
 	void addQuestions(std::vector<Question> questions);
 
+	void setName(std::string name);
 	std::string getName();
 	std::vector<Question> getQuestions();
 };

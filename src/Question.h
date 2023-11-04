@@ -9,6 +9,8 @@ protected:
 
 public:
 
+	void setQuestion(std::string question);
+	void setAnswer(std::string answer);
 	std::string getQuestion();
 	std::string getAnswer();
 	bool isCorrect(std::string answer);
