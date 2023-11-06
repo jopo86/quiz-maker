@@ -3,6 +3,7 @@
 
 #include "Console.h"
 #include "Quiz.h"
+#include "QuizTaker.h"
 
 class Application
 {

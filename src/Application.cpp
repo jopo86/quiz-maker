@@ -81,6 +81,17 @@ void Application::Command(std::string cmd) {
             return;
         }
     }
+    else if (cmd == "take") {
+        if (dir == "Quiz ") {
+            QuizTaker::Take(workingQuiz);
+            PollCommand();
+        }
+        else {
+            Err("'take' can only be called from within Quiz directory", false);
+            PollCommand();
+            return;
+        }
+    }
     else {
         Err("unrecognized command '" + cmd + "'", false);
         PollCommand();
@@ -118,16 +129,20 @@ void Application::AddQuestion() {
     std::string type = Input();
     if (type == "mc") {
         MultipleChoiceQuestion mcq = MultipleChoiceQuestion(question);
-        std::cout << "Enter choices (enter '_done' when finished):\n";
+        Console::Reset();
+        dir = "Quiz:Question:Choices ";
+        std::cout << "Enter choices (enter '-' when finished):\n";
         std::string choice;
-        while (choice != "_done") {
+        while (choice != "-") {
             choice = Input();
-            if (choice != "_done") {
+            if (choice != "-") {
                 mcq.addChoice(choice);
             }
         }
+        dir = "Quiz:Question ";
         Console::Reset();
         std::cout << "Enter correct choice:\n";
+        dir = "Quiz:Question:Answer ";
         std::string answer = Input();
         if (!Contains(mcq.getChoices(), answer)) {
             Err("answer '" + answer + "' not found in choices, question creation aborted", false);
@@ -142,10 +157,13 @@ void Application::AddQuestion() {
     }
     else if (type == "wr") {
         WrittenQuestion wq = WrittenQuestion(question);
+        Console::Reset();
+        dir = "Quiz:Question:Answer ";
         std::cout << "Enter answer:\n";
         std::string answer = Input();
         wq.setAnswer(answer);
         workingQuiz.addQuestion(wq);
+        Console::Reset();
         std::cout << "Question created.\n\n";
     }
     else {

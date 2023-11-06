@@ -1,8 +1,11 @@
 #pragma once
 
+#include <iostream>
+#include <string>
+
 #include "Question.h"
 #include "Quiz.h"
-#include <iostream>
+#include "Console.h"
 
 class QuizTaker
 {
