@@ -1,7 +1,6 @@
 #pragma once
 
-#include "WrittenQuestion.h"
-#include "MultipleChoiceQuestion.h"
+#include "Question.h"
 
 #include <vector>
 

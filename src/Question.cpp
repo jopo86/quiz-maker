@@ -1,13 +1,35 @@
 #include "Question.h"
 
-void Question::setAnswer(std::string answer)
-{
-	this->answer = answer;
+Question::Question(const int type) : type(type) {
+	question = "";
+	answer = "";
+	choices = {};
+}
+
+Question::Question(const int type, std::string question, std::string answer) : type(type) {
+	this->question = question;
+	this;
+	choices = {};
 }
 
 void Question::setQuestion(std::string question)
 {
 	this->question = question;
+}
+
+void Question::setAnswer(std::string answer)
+{
+	this->answer = answer;
+}
+
+void Question::addChoice(std::string choice)
+{
+	if (!(type == MULTIPLE_CHOICE)) throw "Cannot add choices, question is not multiple choice";
+	choices.push_back(choice);
+}
+
+const int Question::getType() {
+	return type;
 }
 
 std::string Question::getQuestion()
@@ -20,7 +42,15 @@ std::string Question::getAnswer()
 	return answer;
 }
 
-bool Question::isCorrect(std::string answer)
+bool Question::check(std::string answer)
 {
 	return this->answer == answer;
+}
+
+bool Question::isChoice(std::string choice) {
+	if (!(type == MULTIPLE_CHOICE)) throw "Cannot add choices, question is not multiple choice";
+	for (std::string _choice : choices) {
+		if (choice == _choice) return true;
+	}
+	return false;
 }

@@ -128,7 +128,7 @@ void Application::AddQuestion() {
     std::cout << "Enter Question type ('mc' for multiple choice, 'wr' for written):\n";
     std::string type = Input();
     if (type == "mc") {
-        MultipleChoiceQuestion mcq = MultipleChoiceQuestion(question);
+        Question mcq(Question::MULTIPLE_CHOICE);
         Console::Reset();
         dir = "Quiz:Question:Choices ";
         std::cout << "Enter choices (enter '-' when finished):\n";
@@ -144,7 +144,7 @@ void Application::AddQuestion() {
         std::cout << "Enter correct choice:\n";
         dir = "Quiz:Question:Answer ";
         std::string answer = Input();
-        if (!Contains(mcq.getChoices(), answer)) {
+        if (!mcq.isChoice(answer)) {
             Err("answer '" + answer + "' not found in choices, question creation aborted", false);
             dir = "Quiz ";
             PollCommand();
@@ -156,7 +156,7 @@ void Application::AddQuestion() {
         std::cout << "Question created.\n\n";
     }
     else if (type == "wr") {
-        WrittenQuestion wq = WrittenQuestion(question);
+        Question wq(Question::WRITTEN);
         Console::Reset();
         dir = "Quiz:Question:Answer ";
         std::cout << "Enter answer:\n";

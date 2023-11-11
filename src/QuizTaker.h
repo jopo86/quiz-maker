@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <typeinfo>
 
 #include "Question.h"
 #include "Quiz.h"
