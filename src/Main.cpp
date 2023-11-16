@@ -4,7 +4,7 @@
 
 int main()
 {
-	Application::Run();
+	Application::Start();
 
 	return 0;
 }

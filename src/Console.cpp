@@ -38,6 +38,10 @@ void Console::Reset() {
 }
 #endif
 
+void Console::Print(std::string msg) {
+	std::cout << msg;
+}
+
 int Console::GetColor() {
 	return currentColor;
 }

@@ -1,31 +1,39 @@
+#pragma once
+
+#define VERSION "0.0.1"
+
 #include <iostream>
 #include <string>
 
+#include "CommandHandler.h"
 #include "Console.h"
 #include "Quiz.h"
 #include "QuizTaker.h"
+#include "Command.h"
 
-class Application
-{
+class Application {
 private:
+
     static std::string dir;
     static Quiz workingQuiz;
 
-    template<typename T> 
-    static bool Contains(std::vector<T> vec, T elem);
-
 public:
-    static void Run();
+
+    static void Start();
 
     static std::string Input();
     static void PollCommand();
-    static void Command(std::string cmd);
+    static void RunCommand(Command command);
 
+    // Commands
     static void Help();
     static void CreateQuiz();
+    static void NameQuiz();
     static void AddQuestion();
-
     static void Err(std::string msg, bool terminate);
     static void Quit();
+    static void ForceQuit();
+    
+    static std::string GetDir();
 
 };

@@ -31,6 +31,7 @@ namespace Console
 	static int currentColor = -1;
 
 	void Clear();
+	void Print(std::string msg);
 	void SetColor(int color);
 	int GetColor();
 	void SetItalic();

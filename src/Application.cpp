@@ -3,111 +3,58 @@
 std::string Application::dir = "";
 Quiz Application::workingQuiz = Quiz();
 
-void Application::Run() {
+void Application::Start() {
     dir = "";
     Console::Reset();
     Console::Clear();
 
     Console::SetColor(Console::CYAN);
-    std::cout << " Quiz Maker v0.0.1\n";
+    Console::Print(" Quiz Maker v0.0.1\n");
     Console::Reset();
-    std::cout << "~~~~~~~~~~~~~~~~~~~\n\n";
+    Console::Print("~~~~~~~~~~~~~~~~~~~\n\n");
 
-    std::cout << "Enter \"help\" for a list of commands.\n\n";
+    Console::Print("Enter \"help\" for a list of commands.\n\n");
+
     PollCommand();
 }
 
 std::string Application::Input() {
-    const int color = Console::GetColor();
-    Console::SetColor(Console::BLUE);
-    std::cout << dir << ">  ";
-    Console::SetColor(Console::YELLOW);
-
     std::string response;
     std::getline(std::cin, response);
-    Console::SetColor(color);
     return response;
 }
 
 void Application::PollCommand() {
-    Command(Input());
+    const int color = Console::GetColor();
+    Console::SetColor(Console::BLUE);
+    Console::Print(dir + ">  ");
+    Console::SetColor(Console::YELLOW);
+    RunCommand(Command::Parse(Input()));
+    Console::SetColor(color);
 }
 
-void Application::Command(std::string cmd) {
+void Application::RunCommand(Command command) {
     Console::Reset();
 
-    if (cmd == "quit!" || cmd =="q!") {
-        exit(0);
-    }
-    else if (cmd == "quit" || cmd == "q") {
-        Quit();
-    }
-    else if (cmd == "help") {
-        Help();
-    } 
-    else if (cmd == "create") {
-        if (dir == "") {
-            CreateQuiz();
-        }
-        else {
-            Err("'create' can only be called from root directory.", false);
-            PollCommand();
-            return;
-        }
-    }
-    else if (cmd == "name") {
-        if (dir == "Quiz ") {
-            std::cout << "Enter quiz name:\n";
-            std::string name = Input();
-            workingQuiz.setName(name);
-            Console::Reset();
-            std::cout << "Quiz name set to '" << name << "'\n\n";
-            PollCommand();
-        }
-        else {
-            Err("'name' can only be called from within Quiz directory", false);
-            PollCommand();
-            return;
-        
-        }
-    }
-    else if (cmd == "addq") {
-        if (dir == "Quiz ") {
-            AddQuestion();
-        }
-        else {
-            Err("'addq' can only be called from within Quiz directory", false);
-            PollCommand();
-            return;
-        }
-    }
-    else if (cmd == "take") {
-        if (dir == "Quiz ") {
-            QuizTaker::Take(workingQuiz);
-            PollCommand();
-        }
-        else {
-            Err("'take' can only be called from within Quiz directory", false);
-            PollCommand();
-            return;
-        }
-    }
-    else {
-        Err("unrecognized command '" + cmd + "'", false);
+    if (!CommandHandler::Verify(command)) {
+        Err(CommandHandler::GetErr(), false);
         PollCommand();
+        return;
     }
+
+    CommandHandler::Run(command);
 }
 
 void Application::Help() {
     Console::SetColor(Console::BLUE);
-    std::cout << "AVAILABLE COMMANDS:\n\n";
-    std::cout << "q / quit : end program\n";
-    std::cout << "q! / quit! : end program without confirmation (can be dangerous)\n\n";
-    std::cout << "help : Display this help message\n\n";
-    std::cout << "create : Create a new quiz (when in root directory)\n\n";
-    std::cout << "name : Name quiz (when in Quiz directory)\n";
-    std::cout << "addq : Add a new question (when in Quiz directory)\n\n";
-    std::cout << "\n";
+    Console::Print("AVAILABLE COMMANDS:\n\n");
+    Console::Print("q / quit : end program\n");
+    Console::Print("q! / quit! : end program without confirmation (can be dangerous)\n\n");
+    Console::Print("help : Display this help message\n\n");
+    Console::Print("create : Create a new quiz (when in root directory)\n\n");
+    Console::Print("name : Name quiz (when in Quiz directory)\n");
+    Console::Print("addq : Add a new question (when in Quiz directory)\n\n");
+    Console::Print("\n");
     Console::Reset();
     PollCommand();
 }
@@ -115,23 +62,32 @@ void Application::Help() {
 void Application::CreateQuiz() {
     dir = "Quiz ";
     workingQuiz = Quiz("Untitled");
-    std::cout << "Created empty quiz 'Untitled'\n\n";
+    Console::Print("Created empty quiz 'Untitled'\n\n");
+    PollCommand();
+}
+
+void Application::NameQuiz() {
+    Console::Print("Enter quiz name:\n");
+    std::string name = Input();
+    workingQuiz.setName(name);
+    Console::Reset();
+    Console::Print("Quiz name set to '" + name + "'\n\n");
     PollCommand();
 }
 
 void Application::AddQuestion() {
     dir = "Quiz:Question ";
     Console::Reset();
-    std::cout << "\nEnter Question: \n";
+    Console::Print("\nEnter Question: \n");
     std::string question = Input();
     Console::Reset();
-    std::cout << "Enter Question type ('mc' for multiple choice, 'wr' for written):\n";
+    Console::Print("Enter Question type ('mc' for multiple choice, 'wr' for written):\n");
     std::string type = Input();
     if (type == "mc") {
         Question mcq(Question::MULTIPLE_CHOICE);
         Console::Reset();
         dir = "Quiz:Question:Choices ";
-        std::cout << "Enter choices (enter '-' when finished):\n";
+        Console::Print("Enter choices (enter '-' when finished):\n");
         std::string choice;
         while (choice != "-") {
             choice = Input();
@@ -141,7 +97,7 @@ void Application::AddQuestion() {
         }
         dir = "Quiz:Question ";
         Console::Reset();
-        std::cout << "Enter correct choice:\n";
+        Console::Print("Enter correct choice:\n");
         dir = "Quiz:Question:Answer ";
         std::string answer = Input();
         if (!mcq.isChoice(answer)) {
@@ -153,18 +109,18 @@ void Application::AddQuestion() {
         mcq.setAnswer(answer);
         workingQuiz.addQuestion(mcq);
         Console::Reset();
-        std::cout << "Question created.\n\n";
+        Console::Print("Question created.\n\n");
     }
     else if (type == "wr") {
         Question wq(Question::WRITTEN);
         Console::Reset();
         dir = "Quiz:Question:Answer ";
-        std::cout << "Enter answer:\n";
+        Console::Print("Enter answer:\n");
         std::string answer = Input();
         wq.setAnswer(answer);
         workingQuiz.addQuestion(wq);
         Console::Reset();
-        std::cout << "Question created.\n\n";
+        Console::Print("Question created.\n\n");
     }
     else {
         Err("unhandled response: '" + type + "', question creation aborted", false);
@@ -175,20 +131,20 @@ void Application::AddQuestion() {
 
 void Application::Err(std::string msg, bool terminate) {
     Console::SetColor(Console::RED);
-    std::cout << "ERROR: " << msg << "\n\n";
+    Console::Print("ERROR: " + msg + "\n\n");
     Console::Reset();
     if (terminate) exit(1);
 }
 
 void Application::Quit() {
     Console::SetColor(Console::BLUE);
-    std::cout << "Are you sure you want to quit? Progress may not be saved. (y/n)\n";
+    Console::Print("Are you sure you want to quit? Progress may not be saved. (y/n)\n");
     std::string response = Input();
     if (response == "y") {
-        exit(0);
+        ForceQuit();
     }
     else if (response == "n") {
-        std::cout << "\n";
+        Console::Print("\n");
         PollCommand();
     }
     else {
@@ -197,10 +153,10 @@ void Application::Quit() {
     }
 }
 
-template <typename T>
-bool Application::Contains(std::vector<T> vec, T elem) {
-    for (int  i = 0; i < vec.size(); i++) {
-        if (vec[i] == elem) return true;
-    }
-    return false;
+void Application::ForceQuit() {
+    exit(0);
+}
+
+std::string Application::GetDir() {
+    return dir;
 }
