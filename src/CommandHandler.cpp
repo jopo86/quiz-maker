@@ -1,6 +1,13 @@
 #include "CommandHandler.h"
 
-const std::vector<std::string> CommandHandler::validCommands = {
+const std::vector<std::string> CommandHandler::DIR_ANY = { "", "Quiz", "Quiz:Question", "Quiz:Question:Choices", "Quiz:Question:Answer" };
+const std::vector<std::string> CommandHandler::DIR_ROOT = { "" };
+const std::vector<std::string> CommandHandler::DIR_QUIZ = { "Quiz" };
+const std::vector<std::string> CommandHandler::DIR_QUESTION = { "Quiz:Question" };
+const std::vector<std::string> CommandHandler::DIR_CHOICES = { "Quiz:Question:Choices" };
+const std::vector<std::string> CommandHandler::DIR_ANSWER = { "Quiz:Question:Answer" };
+
+const std::vector<std::string> CommandHandler::VALID_COMMANDS = {
     "quit!",
     "q!",
     "quit",
@@ -12,16 +19,28 @@ const std::vector<std::string> CommandHandler::validCommands = {
     "take"
 };
 
-const std::map<std::string, std::vector<std::string>> CommandHandler::validArgs = {
-    { "quit!", { "" } },
-    { "q!", { "" } },
-    { "quit", { "" } },
-    { "q", { "" } },
-    { "help", { "more" } },
+const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_ARGS = {
+    { "quit!",  { "" } },
+    { "q!",     { "" } },
+    { "quit",   { "" } },
+    { "q",      { "" } },
+    { "help",   { "more" } },
     { "create", { "" } },
-    { "name", { "" } },
-    { "addq", { "mc", "wr", "tf" } },
-    { "take", { "autosect" } }
+    { "name",   { "" } },
+    { "addq",   { "mc", "wr", "tf" } },
+    { "take",   { "autosect" } }
+};
+
+const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_DIRS = {
+    { "quit!",  DIR_ANY },
+    { "q!",     DIR_ANY },
+    { "quit",   DIR_ANY },
+    { "q",      DIR_ANY },
+    { "help",   DIR_ANY },
+    { "create", DIR_ROOT },
+    { "name",   DIR_QUIZ },
+    { "addq",   DIR_QUIZ },
+    { "take",   DIR_QUIZ }
 };
 
 std::string CommandHandler::err = "";
@@ -34,8 +53,8 @@ bool CommandHandler::Verify(Command command) {
     // check if command exists
     bool exists = false;
 
-    for (int i = 0; i < validCommands.size(); i++) {
-        if (cmd == validCommands[i]) {
+    for (int i = 0; i < VALID_COMMANDS.size(); i++) {
+        if (cmd == VALID_COMMANDS[i]) {
             exists = true;
         }
     }
@@ -49,8 +68,8 @@ bool CommandHandler::Verify(Command command) {
     std::vector<bool> valid(args.size(), false);
 
     for (int i = 0; i < args.size(); i++) {
-        for (int j = 0; j < validArgs.size(); j++) {
-            if (args[i] == validArgs.at(cmd)[j]) {
+        for (int j = 0; j < VALID_ARGS.size(); j++) {
+            if (args[i] == VALID_ARGS.at(cmd)[j]) {
                 valid[i] = true;
             }
         }
@@ -67,9 +86,20 @@ bool CommandHandler::Verify(Command command) {
     err += "for command '" + cmd + "'\nUse 'help -more' to get a list of commands with their arguments.";
 
     if (!allArgsValid) return false;
-
     err = "";
-    return true;
+
+    // check if command is valid in current directory
+    for (int i = 0; i < VALID_DIRS.at(cmd).size(); i++) {
+        if (Application::GetDir() == VALID_DIRS.at(cmd)[i]) {
+            return true;
+        }
+    }
+    err = "command '" + cmd + "' can only be called from directory: ";
+    for (int i = 0; i < VALID_DIRS.at(cmd).size(); i++) {
+        err += "'" + VALID_DIRS.at(cmd)[i] + "' ";
+    }
+    err += "\nUse 'help -more' to get a list of commands with their valid directories.";
+    return false;
 }
 
 void CommandHandler::Run(Command command) {
@@ -87,53 +117,18 @@ void CommandHandler::Run(Command command) {
         Application::Help();
     } 
     else if (cmd == "create") {
-        if (dir == "") {
-            Application::CreateQuiz();
-        }
-        else {
-            Application::Err("'create' can only be called from root directory.", false);
-            Application::PollCommand();
-            return;
-        }
+        Application::CreateQuiz();
     }
     else if (cmd == "name") {
-        if (dir == "Quiz ") {
-            Application::NameQuiz();
-        }
-        else {
-            Application::Err("'name' can only be called from within Quiz directory", false);
-            Application::PollCommand();
-            return;
-        
-        }
+        Application::NameQuiz();
     }
     else if (cmd == "addq") {
-        if (dir == "Quiz ") {
-            Application::AddQuestion();
-        }
-        else {
-            Application::Err("'addq' can only be called from within Quiz directory", false);
-            Application::PollCommand();
-            return;
-        }
+        Application::AddQuestion();
     }
     else if (cmd == "take") {
-        if (dir == "Quiz ") {
-            // Application::QuizTaker::Take(workingQuiz);
-            Application::PollCommand();
-        }
-        else {
-            Application::Err("'take' can only be called from within Quiz directory", false);
-            Application::PollCommand();
-            return;
-        }
-    }
-    else {
-        Application::Err("unrecognized command '" + cmd + "'", false);
+        // Application::QuizTaker::Take(workingQuiz);
         Application::PollCommand();
     }
-
-    // TODO: cover directory errors in Verify(), not here
 }
 
 std::string CommandHandler::GetErr() {

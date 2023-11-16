@@ -32,6 +32,7 @@ namespace Console
 
 	void Clear();
 	void Print(std::string msg);
+	std::string Input();
 	void SetColor(int color);
 	int GetColor();
 	void SetItalic();

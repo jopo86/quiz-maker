@@ -42,6 +42,12 @@ void Console::Print(std::string msg) {
 	std::cout << msg;
 }
 
+std::string Console::Input() {
+    std::string response;
+    std::getline(std::cin, response);
+    return response;
+}
+
 int Console::GetColor() {
 	return currentColor;
 }

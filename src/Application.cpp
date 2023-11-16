@@ -18,18 +18,12 @@ void Application::Start() {
     PollCommand();
 }
 
-std::string Application::Input() {
-    std::string response;
-    std::getline(std::cin, response);
-    return response;
-}
-
 void Application::PollCommand() {
     const int color = Console::GetColor();
     Console::SetColor(Console::BLUE);
-    Console::Print(dir + ">  ");
+    Console::Print(dir + "> ");
     Console::SetColor(Console::YELLOW);
-    RunCommand(Command::Parse(Input()));
+    RunCommand(Command::Parse(Console::Input()));
     Console::SetColor(color);
 }
 
@@ -60,7 +54,8 @@ void Application::Help() {
 }
 
 void Application::CreateQuiz() {
-    dir = "Quiz ";
+    // TODO: improve quiz creation process
+    dir = "Quiz";
     workingQuiz = Quiz("Untitled");
     Console::Print("Created empty quiz 'Untitled'\n\n");
     PollCommand();
@@ -68,7 +63,7 @@ void Application::CreateQuiz() {
 
 void Application::NameQuiz() {
     Console::Print("Enter quiz name:\n");
-    std::string name = Input();
+    std::string name = Console::Input();
     workingQuiz.setName(name);
     Console::Reset();
     Console::Print("Quiz name set to '" + name + "'\n\n");
@@ -76,33 +71,33 @@ void Application::NameQuiz() {
 }
 
 void Application::AddQuestion() {
-    dir = "Quiz:Question ";
+    dir = "Quiz:Question";
     Console::Reset();
     Console::Print("\nEnter Question: \n");
-    std::string question = Input();
+    std::string question = Console::Input();
     Console::Reset();
     Console::Print("Enter Question type ('mc' for multiple choice, 'wr' for written):\n");
-    std::string type = Input();
+    std::string type = Console::Input();
     if (type == "mc") {
         Question mcq(Question::MULTIPLE_CHOICE);
         Console::Reset();
-        dir = "Quiz:Question:Choices ";
+        dir = "Quiz:Question:Choices";
         Console::Print("Enter choices (enter '-' when finished):\n");
         std::string choice;
         while (choice != "-") {
-            choice = Input();
+            choice = Console::Input();
             if (choice != "-") {
                 mcq.addChoice(choice);
             }
         }
-        dir = "Quiz:Question ";
+        dir = "Quiz:Question";
         Console::Reset();
         Console::Print("Enter correct choice:\n");
-        dir = "Quiz:Question:Answer ";
-        std::string answer = Input();
+        dir = "Quiz:Question:Answer";
+        std::string answer = Console::Input();
         if (!mcq.isChoice(answer)) {
             Err("answer '" + answer + "' not found in choices, question creation aborted", false);
-            dir = "Quiz ";
+            dir = "Quiz";
             PollCommand();
             return;
         }
@@ -114,9 +109,9 @@ void Application::AddQuestion() {
     else if (type == "wr") {
         Question wq(Question::WRITTEN);
         Console::Reset();
-        dir = "Quiz:Question:Answer ";
+        dir = "Quiz:Question:Answer";
         Console::Print("Enter answer:\n");
-        std::string answer = Input();
+        std::string answer = Console::Input();
         wq.setAnswer(answer);
         workingQuiz.addQuestion(wq);
         Console::Reset();
@@ -125,7 +120,7 @@ void Application::AddQuestion() {
     else {
         Err("unhandled response: '" + type + "', question creation aborted", false);
     }
-    dir = "Quiz ";
+    dir = "Quiz";
     PollCommand();
 }
 
@@ -139,7 +134,7 @@ void Application::Err(std::string msg, bool terminate) {
 void Application::Quit() {
     Console::SetColor(Console::BLUE);
     Console::Print("Are you sure you want to quit? Progress may not be saved. (y/n)\n");
-    std::string response = Input();
+    std::string response = Console::Input();
     if (response == "y") {
         ForceQuit();
     }

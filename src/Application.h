@@ -21,7 +21,6 @@ public:
 
     static void Start();
 
-    static std::string Input();
     static void PollCommand();
     static void RunCommand(Command command);
 
