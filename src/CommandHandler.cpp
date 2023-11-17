@@ -105,7 +105,6 @@ bool CommandHandler::Verify(Command command) {
 void CommandHandler::Run(Command command) {
     std::string dir = Application::GetDir();
     std::string cmd = command.getCmd();
-    std::vector<std::string> args = command.getArgs();
 
     if (cmd == "quit!" || cmd =="q!") {
         Application::ForceQuit();
@@ -114,7 +113,7 @@ void CommandHandler::Run(Command command) {
         Application::Quit();
     }
     else if (cmd == "help") {
-        if (Util::Contains(args, "more")) Application::HelpMore();
+        if (command.hasArg("more")) Application::HelpMore();
         else Application::Help();
     } 
     else if (cmd == "create") {
@@ -124,7 +123,10 @@ void CommandHandler::Run(Command command) {
         Application::NameQuiz();
     }
     else if (cmd == "addq") {
-        Application::AddQuestion();
+        if (command.hasArg("mc")) Application::AddQuestionMC();
+        else if (command.hasArg("wr")) Application::AddQuestionWR();
+        else if (command.hasArg("tf")) Application::AddQuestionTF();
+        else Application::AddQuestion();	
     }
     else if (cmd == "take") {
         

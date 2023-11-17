@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include "Util.h"
+
 class Command {
 private:
     const std::string cmd;

@@ -43,9 +43,11 @@ void Console::Print(std::string msg) {
 }
 
 std::string Console::Input() {
+	SetColor(YELLOW);
     std::string response;
     std::getline(std::cin, response);
     return response;
+	Reset();
 }
 
 int Console::GetColor() {

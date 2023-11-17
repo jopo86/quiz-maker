@@ -1,16 +1,13 @@
 #include "Command.h"
 
-Command::Command() : cmd(""), args({}) {}
+Command::Command() : cmd(""), args() {}
 
 Command::Command(std::string cmd) : cmd(cmd), args({}) {}
 
 Command::Command(std::string cmd, std::vector<std::string> args) : cmd(cmd), args(args) {}
 
 bool Command::hasArg(std::string arg) {
-    for (int i = 0; i < args.size(); i++) {
-        if (args[i] == arg) return true;
-    }
-    return false;
+    return Util::Contains(args, arg);
 }
 
 Command Command::Parse(std::string str) {
@@ -28,9 +25,9 @@ Command Command::Parse(std::string str) {
             continue;
         }
         
-        if (argIndex == -1) cmd.append({c});
+        if (argIndex == -1) cmd.append({ c });
         else {
-            args[argIndex].append({c});
+            args[argIndex].append({ c });
         }
     }
 

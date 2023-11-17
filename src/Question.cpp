@@ -49,8 +49,5 @@ bool Question::check(std::string answer)
 
 bool Question::isChoice(std::string choice) {
 	if (!(type == MULTIPLE_CHOICE)) throw "Cannot add choices, question is not multiple choice";
-	for (std::string _choice : choices) {
-		if (choice == _choice) return true;
-	}
-	return false;
+	return Util::Contains(choices, choice);
 }

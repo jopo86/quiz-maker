@@ -29,7 +29,11 @@ public:
     static void HelpMore();
     static void CreateQuiz();
     static void NameQuiz();
+    static void TakeQuiz(bool autosect);
     static void AddQuestion();
+    static void AddQuestionMC();
+    static void AddQuestionWR();
+    static void AddQuestionTF();
     static void Err(std::string msg, bool terminate);
     static void Quit();
     static void ForceQuit();
