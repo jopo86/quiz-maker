@@ -114,7 +114,8 @@ void CommandHandler::Run(Command command) {
         Application::Quit();
     }
     else if (cmd == "help") {
-        Application::Help();
+        if (Util::Contains(args, "more")) Application::HelpMore();
+        else Application::Help();
     } 
     else if (cmd == "create") {
         Application::CreateQuiz();
@@ -126,8 +127,7 @@ void CommandHandler::Run(Command command) {
         Application::AddQuestion();
     }
     else if (cmd == "take") {
-        // Application::QuizTaker::Take(workingQuiz);
-        Application::PollCommand();
+        
     }
 }
 

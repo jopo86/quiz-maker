@@ -53,6 +53,20 @@ void Application::Help() {
     PollCommand();
 }
 
+void Application::HelpMore() {
+    Console::SetColor(Console::BLUE);
+    Console::Print("AVAILABLE COMMANDS (MORE):\n\n");
+    Console::Print("q / quit : end program\n");
+    Console::Print("q! / quit! : end program without confirmation (can be dangerous)\n\n");
+    Console::Print("help : Display this help message\n\n");
+    Console::Print("create : Create a new quiz (when in root directory)\n\n");
+    Console::Print("name : Name quiz (when in Quiz directory)\n");
+    Console::Print("addq : Add a new question (when in Quiz directory)\n\n");
+    Console::Print("\n");
+    Console::Reset();
+    PollCommand();
+}
+
 void Application::CreateQuiz() {
     // TODO: improve quiz creation process
     dir = "Quiz";

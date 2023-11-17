@@ -5,7 +5,7 @@
 #include <map>
 
 #include "Application.h"
-#include "Console.h"
+#include "Util.h"
 #include "Command.h"
 
 class CommandHandler {
