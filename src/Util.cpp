@@ -56,3 +56,14 @@ std::string Util::ToUpper(std::string str) {
 bool Util::EqualsIgnoreCase(std::string a, std::string b) {
     return ToLower(a) == ToLower(b);
 }
+
+#ifdef _WIN32
+void Util::OpenLink(std::string link) {
+    ShellExecuteA(NULL, "open", link.c_str(), NULL, NULL, SW_SHOWNORMAL);
+}
+#else
+void Util::OpenLink(std::string link) {
+    std::string cmd = "xdg-open " + link;
+    system(cmd.c_str());
+}
+#endif

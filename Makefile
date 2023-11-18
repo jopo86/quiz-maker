@@ -1,9 +1,9 @@
 compile_run:
-	g++ -o build/debug/a -L lib -I include src/*.cpp
-	./build/debug/a
+	g++ -o build/debug/QuizMaker -L lib -I include src/*.cpp
+	./build/debug/QuizMaker
 
 compile:
-	g++ -o build/debug/a -L lib -I include src/*.cpp
+	g++ -o build/debug/QuizMaker -L lib -I include src/*.cpp
 
 run:
-	./build/debug/a
+	./build/debug/QuizMaker

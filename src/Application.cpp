@@ -48,6 +48,8 @@ void Application::Help() {
     Console::Print("create     : create new quiz\n");
     Console::Print("name       : name quiz\n");
     Console::Print("addq       : add question\n");
+    Console::Print("take       : take quiz\n");
+    Console::Print("clr        : clear screen\n");
     Console::Print("\n");
     Console::Reset();
     PollCommand();
@@ -55,6 +57,7 @@ void Application::Help() {
 
 void Application::HelpMore() {
     Console::SetColor(Console::BLUE);
+    Console::Print("(may have to expand window to see table correctly)\n");
     Console::Print("-----------------------------------------------------------------------------------------------------------------------------\n");
     Console::Print("|     COMMAND     |         EXPLANATION         |     ARGUMENTS    |             ARGS EXPLANATION             |  DIRECTORY  |\n");
     Console::Print("|---------------------------------------------------------------------------------------------------------------------------|\n");
@@ -65,6 +68,7 @@ void Application::HelpMore() {
     Console::Print("|      name       |          name quiz          |       none       |                   N/A                    |     Quiz    |\n");
     Console::Print("|      addq       |         add question        |   -mc, -wr, -tf  |   multiple choice, written, true/false   |     Quiz    |\n");
     Console::Print("|      take       |          take quiz          |  -autosect, -clr |   auto make quiz sections, clear screen  |     Quiz    |\n");
+    Console::Print("|      clr        |         clear screen        |       none       |                   N/A                    |     Root    |\n");
     Console::Print("|                 |                             |                  |                                          |             |\n");
     Console::Print("-----------------------------------------------------------------------------------------------------------------------------\n");
     Console::Print("\n");
@@ -113,13 +117,11 @@ void Application::AddQuestion() {
 }
 
 void Application::AddQuestionMC() {
-    dir = "Quiz:Question";
     Question mcq(Question::MULTIPLE_CHOICE);
     Console::Print("\nEnter Question: \n");
     std::string question = Console::Input();
     mcq.setQuestion(question);
     Console::Reset();
-    dir = "Quiz:Question:Choices";
     Console::Print("Enter choices (enter '-' when finished):\n");
     std::string choice;
     while (choice != "-") {
@@ -128,10 +130,8 @@ void Application::AddQuestionMC() {
             mcq.addChoice(choice);
         }
     }
-    dir = "Quiz:Question:Answer";
     Console::Reset();
     Console::Print("Enter correct choice:\n");
-    dir = "Quiz:Question:Answer";
     std::string answer = Console::Input();
     if (!mcq.isChoice(answer)) {
         Err("answer '" + answer + "' not found in choices, question creation aborted", false);
@@ -147,13 +147,11 @@ void Application::AddQuestionMC() {
 }
 
 void Application::AddQuestionWR() {
-    dir = "Quiz:Question";
     Question wq(Question::WRITTEN);
     Console::Print("\nEnter Question: \n");
     std::string question = Console::Input();
     wq.setQuestion(question);
     Console::Reset();
-    dir = "Quiz:Question:Answer";
     Console::Print("Enter answer:\n");
     std::string answer = Console::Input();
     wq.setAnswer(answer);
@@ -164,7 +162,6 @@ void Application::AddQuestionWR() {
 }
 
 void Application::AddQuestionTF() {
-    dir = "Quiz:Question";
     // TODO: actually make true/false question and stuff
 }
 

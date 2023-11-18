@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 
+#include <windows.h>
+#include <shellapi.h>
+
 class Util {
 
 private:
@@ -47,4 +50,6 @@ public:
     static std::string ToUpper(std::string str);
 
     static bool EqualsIgnoreCase(std::string a, std::string b);
+
+    static void OpenLink(std::string link);
 };
