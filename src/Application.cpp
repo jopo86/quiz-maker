@@ -9,11 +9,14 @@ void Application::Start() {
     Console::Clear();
 
     Console::SetColor(Console::CYAN);
-    Console::Print(" Quiz Maker v0.0.1\n");
+    std::string title = " Quiz Maker v" + std::string(VERSION) + " ";
+    Console::Print(title + "\n");
     Console::Reset();
-    Console::Print("~~~~~~~~~~~~~~~~~~~\n\n");
+    for (int i = 0; i < title.length(); i++) {
+        Console::Print("~");
+    }
 
-    Console::Print("Enter \"help\" for a list of commands.\n\n");
+    Console::Print("\n\nEnter \"help\" for a list of commands.\n\n");
 
     PollCommand();
 }
