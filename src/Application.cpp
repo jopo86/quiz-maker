@@ -55,18 +55,18 @@ void Application::Help() {
 
 void Application::HelpMore() {
     Console::SetColor(Console::BLUE);
-    Console::Print("---------------------------------------------------------------------------------------------------------------------------\n");
-    Console::Print("|     COMMAND     |         EXPLANATION         |    ARGUMENTS   |             ARGS EXPLANATION             |  DIRECTORY  |\n");
-    Console::Print("|-------------------------------------------------------------------------------------------------------------------------|\n");
-    Console::Print("|     q / quit    |        quit program         |      none      |                   N/A                    |     any     |\n");
-    Console::Print("|    q! / quit!   |      force quit program     |      none      |                   N/A                    |     any     |\n");
-    Console::Print("|      help       |     display help message    |      -more     |           more detailed help msg         |     any     |\n");
-    Console::Print("|     create      |       create new quiz       |      none      |                   N/A                    |     Root    |\n");
-    Console::Print("|      name       |          name quiz          |      none      |                   N/A                    |     Quiz    |\n");
-    Console::Print("|      addq       |         add question        |  -mc, -wr, -tf |   multiple choice, written, true/false   |     Quiz    |\n");
-    Console::Print("|      take       |          take quiz          |   -autosect    |     automatically make quiz sections     |     Quiz    |\n");
-    Console::Print("|                 |                             |                |                                          |             |\n");
-    Console::Print("---------------------------------------------------------------------------------------------------------------------------\n");
+    Console::Print("-----------------------------------------------------------------------------------------------------------------------------\n");
+    Console::Print("|     COMMAND     |         EXPLANATION         |     ARGUMENTS    |             ARGS EXPLANATION             |  DIRECTORY  |\n");
+    Console::Print("|---------------------------------------------------------------------------------------------------------------------------|\n");
+    Console::Print("|     q / quit    |        quit program         |       none       |                   N/A                    |     any     |\n");
+    Console::Print("|    q! / quit!   |      force quit program     |       none       |                   N/A                    |     any     |\n");
+    Console::Print("|      help       |     display help message    |       -more      |       more detailed help msg (this)      |     any     |\n");
+    Console::Print("|     create      |       create new quiz       |       none       |                   N/A                    |     Root    |\n");
+    Console::Print("|      name       |          name quiz          |       none       |                   N/A                    |     Quiz    |\n");
+    Console::Print("|      addq       |         add question        |   -mc, -wr, -tf  |   multiple choice, written, true/false   |     Quiz    |\n");
+    Console::Print("|      take       |          take quiz          |  -autosect, -clr |   auto make quiz sections, clear screen  |     Quiz    |\n");
+    Console::Print("|                 |                             |                  |                                          |             |\n");
+    Console::Print("-----------------------------------------------------------------------------------------------------------------------------\n");
     Console::Print("\n");
     Console::Reset();
     PollCommand();

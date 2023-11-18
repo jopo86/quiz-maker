@@ -28,7 +28,7 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_ARGS
     { "create", { "" } },
     { "name",   { "" } },
     { "addq",   { "mc", "wr", "tf" } },
-    { "take",   { "autosect" } }
+    { "take",   { "autosect", "clr" } }
 };
 
 const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_DIRS = {
@@ -46,20 +46,15 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_DIRS
 std::string CommandHandler::err = "";
 
 bool CommandHandler::Verify(Command command) {
-    std::string cmd = command.getCmd();
-    std::vector<std::string> args = command.getArgs();
+    std::string cmd = Util::ToLower(command.getCmd());
+    std::vector<std::string> args = {};
+    for (int i = 0; i < command.getArgs().size(); i++) {
+        args.push_back(Util::ToLower(command.getArgs()[i]));
+    }
 
 
     // check if command exists
-    bool exists = false;
-
-    for (int i = 0; i < VALID_COMMANDS.size(); i++) {
-        if (cmd == VALID_COMMANDS[i]) {
-            exists = true;
-        }
-    }
-
-    if (!exists) {
+    if (!Util::Contains(VALID_COMMANDS, cmd)) {
         err = "unrecognized command '" + cmd + "'\nUse 'help' to get a list of commands.";
         return false;
     }
@@ -68,11 +63,7 @@ bool CommandHandler::Verify(Command command) {
     std::vector<bool> valid(args.size(), false);
 
     for (int i = 0; i < args.size(); i++) {
-        for (int j = 0; j < VALID_ARGS.size(); j++) {
-            if (args[i] == VALID_ARGS.at(cmd)[j]) {
-                valid[i] = true;
-            }
-        }
+        valid[i] = Util::Contains(VALID_ARGS.at(cmd), args[i]);
     }
 
     bool allArgsValid = true;
@@ -89,11 +80,8 @@ bool CommandHandler::Verify(Command command) {
     err = "";
 
     // check if command is valid in current directory
-    for (int i = 0; i < VALID_DIRS.at(cmd).size(); i++) {
-        if (Application::GetDir() == VALID_DIRS.at(cmd)[i]) {
-            return true;
-        }
-    }
+    if (Util::Contains(VALID_DIRS.at(cmd), Application::GetDir())) return true;
+
     err = "command '" + cmd + "' can only be called from directory: ";
     for (int i = 0; i < VALID_DIRS.at(cmd).size(); i++) {
         err += "'" + VALID_DIRS.at(cmd)[i] + "' ";
@@ -106,7 +94,7 @@ void CommandHandler::Run(Command command) {
     std::string dir = Application::GetDir();
     std::string cmd = command.getCmd();
 
-    if (cmd == "quit!" || cmd =="q!") {
+    if (cmd == "quit!" || cmd == "q!") {
         Application::ForceQuit();
     }
     else if (cmd == "quit" || cmd == "q") {
