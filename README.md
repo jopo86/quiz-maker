@@ -10,9 +10,9 @@ To install, simply download the zip file below, extract it, and run QuizMaker.ex
 Windows may stop the program from running, this is because it does not recognize the application, which is normal. If this happens click 'More Info' and then 'Run anway'.
 
 ## How To Use
-Like the terminal, this program runs based off (pseudo-)directories and commands that the user inputs. When the program starts you will be in the Root directory, shown as just ">". From here you can enter any command that works in the Root directory or any directory. A full list of commands, their arguments, and their valid directories can be seen in the [Wiki](https://github.com/jopo86/QuizMaker/wiki) or by the `help -more` command.
+Like the terminal, this program runs based off (pseudo-)directories and commands that the user inputs. When the program starts you will be in the Root directory, shown as just ">". From here you can enter any command that works in the Root directory or any directory. A full list of commands, their arguments, and their valid directories can be seen in the [Wiki](https://github.com/jopo86/QuizMaker/wiki/Documentation) or by the `help -more` command.
 
-See full documentation in the [Wiki](https://github.com/jopo86/QuizMaker/wiki).
+See full documentation in the [Wiki](https://github.com/jopo86/QuizMaker/wiki/Documentation).
 
 ## Misc Info
 Commands and arguments are case-insensitive, meaning `create`, `CREATE`, and `cReATe` will all do the same thing.
