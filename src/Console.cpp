@@ -46,8 +46,8 @@ std::string Console::Input() {
 	SetColor(YELLOW);
     std::string response;
     std::getline(std::cin, response);
-    return response;
 	Reset();
+    return response;
 }
 
 int Console::GetColor() {

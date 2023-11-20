@@ -49,6 +49,9 @@ public:
     static std::string ToLower(std::string str);
     static std::string ToUpper(std::string str);
 
+    static char NumToLetter(int i);
+    static int LetterToNum(char c);
+
     static bool EqualsIgnoreCase(std::string a, std::string b);
 
     static void OpenLink(std::string link);

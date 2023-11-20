@@ -16,7 +16,7 @@ void Application::Start() {
         Console::Print("~");
     }
 
-    Console::Print("\n\nEnter \"help\" for a list of commands.\n\n");
+    Console::Print("\n\nEnter 'help' for a list of commands.\n\n");
 
     PollCommand();
 }
@@ -25,7 +25,6 @@ void Application::PollCommand() {
     const int color = Console::GetColor();
     Console::SetColor(Console::BLUE);
     Console::Print(dir + "> ");
-    Console::SetColor(Console::YELLOW);
     RunCommand(Command::Parse(Console::Input()));
     Console::SetColor(color);
 }
@@ -42,14 +41,20 @@ void Application::RunCommand(Command command) {
     CommandHandler::Run(command);
 }
 
+void Application::SuccessMsg(std::string msg) {
+    Console::SetColor(Console::GREEN);
+    Console::Print(msg);
+    Console::Reset();
+}
+
 void Application::Help() {
-    Console::SetColor(Console::BLUE);
+    Console::SetColor(Console::GREEN);
     Console::Print("COMMANDS:\n");
     Console::Print("q / quit   : quit program\n");
     Console::Print("q! / quit! : force quit program\n");
     Console::Print("help       : display this help message\n");
     Console::Print("create     : create new quiz\n");
-    Console::Print("name       : name quiz\n");
+    Console::Print("rename     : rename quiz\n");
     Console::Print("addq       : add question\n");
     Console::Print("take       : take quiz\n");
     Console::Print("clr        : clear screen\n");
@@ -59,7 +64,7 @@ void Application::Help() {
 }
 
 void Application::HelpMore() {
-    Console::SetColor(Console::BLUE);
+    Console::SetColor(Console::GREEN);
     Console::Print("(may have to expand window to see table correctly)\n");
     Console::Print("-----------------------------------------------------------------------------------------------------------------------------\n");
     Console::Print("|     COMMAND     |         EXPLANATION         |     ARGUMENTS    |             ARGS EXPLANATION             |  DIRECTORY  |\n");
@@ -68,7 +73,7 @@ void Application::HelpMore() {
     Console::Print("|    q! / quit!   |      force quit program     |       none       |                   N/A                    |     any     |\n");
     Console::Print("|      help       |     display help message    |       -more      |       more detailed help msg (this)      |     any     |\n");
     Console::Print("|     create      |       create new quiz       |       none       |                   N/A                    |     Root    |\n");
-    Console::Print("|      name       |          name quiz          |       none       |                   N/A                    |     Quiz    |\n");
+    Console::Print("|     rename      |         rename quiz         |       none       |                   N/A                    |     Quiz    |\n");
     Console::Print("|      addq       |         add question        |   -mc, -wr, -tf  |   multiple choice, written, true/false   |     Quiz    |\n");
     Console::Print("|      take       |          take quiz          |  -autosect, -clr |   auto make quiz sections, clear screen  |     Quiz    |\n");
     Console::Print("|      clr        |         clear screen        |       none       |                   N/A                    |     Root    |\n");
@@ -80,51 +85,45 @@ void Application::HelpMore() {
 }
 
 void Application::CreateQuiz() {
-    // TODO: improve quiz creation process
     dir = "Quiz";
-    workingQuiz = Quiz("Untitled");
     Console::Reset();
-    Console::Print("Created empty quiz 'Untitled'\n\n");
+    Console::Print("Enter quiz name: ");
+    workingQuiz = Quiz(Console::Input());
+    SuccessMsg("Created empty quiz '" + workingQuiz.getName() + "'.\n\n");
     PollCommand();
 }
 
-void Application::NameQuiz() {
-    Console::Print("Enter quiz name:\n");
+void Application::RenameQuiz() {
+    Console::Print("Enter new quiz name:\n");
     std::string name = Console::Input();
     workingQuiz.setName(name);
-    Console::Reset();
-    Console::Print("Quiz name set to '" + name + "'\n\n");
+    SuccessMsg("Quiz name set to '" + name + "'.\n\n");
     PollCommand();
-}
-
-void Application::TakeQuiz(bool autosect) {
-    // TODO
 }
 
 void Application::AddQuestion() {
     Console::Reset();
     Console::Reset();
-    Console::Print("Enter Question type ('mc' for multiple choice, 'wr' for written):\n");
+    Console::Print("Enter Question type ('mc' for multiple choice, 'wr' for written, 'tf' for true/false):\n");
     std::string type = Console::Input();
-    if (type == "mc") {
+    if (Util::EqualsIgnoreCase(type, "mc")) {
         AddQuestionMC();
     }
-    else if (type == "wr") {
+    else if (Util::EqualsIgnoreCase(type, "wr")) {
         AddQuestionWR();
+    }
+    else if (Util::EqualsIgnoreCase(type, "tf")) {
+        AddQuestionTF();
     }
     else {
         Err("unrecognized response: '" + type + "', question creation aborted", false);
     }
-    dir = "Quiz";
-    PollCommand();
 }
 
 void Application::AddQuestionMC() {
     Question mcq(Question::MULTIPLE_CHOICE);
-    Console::Print("\nEnter Question: \n");
-    std::string question = Console::Input();
-    mcq.setQuestion(question);
-    Console::Reset();
+    Console::Print("Enter Question: \n");
+    mcq.setQuestion(Console::Input());
     Console::Print("Enter choices (enter '-' when finished):\n");
     std::string choice;
     while (choice != "-") {
@@ -133,39 +132,109 @@ void Application::AddQuestionMC() {
             mcq.addChoice(choice);
         }
     }
-    Console::Reset();
     Console::Print("Enter correct choice:\n");
     std::string answer = Console::Input();
     if (!mcq.isChoice(answer)) {
         Err("answer '" + answer + "' not found in choices, question creation aborted", false);
         dir = "Quiz";
-        PollCommand();
         return;
     }
     mcq.setAnswer(answer);
     workingQuiz.addQuestion(mcq);
-    Console::Reset();
-    Console::Print("Question created.\n\n");
+    SuccessMsg("Question created.\n\n");
     PollCommand();
 }
 
 void Application::AddQuestionWR() {
     Question wq(Question::WRITTEN);
-    Console::Print("\nEnter Question: \n");
-    std::string question = Console::Input();
-    wq.setQuestion(question);
-    Console::Reset();
+    Console::Print("Enter Question: \n");
+    wq.setQuestion(Console::Input());
     Console::Print("Enter answer:\n");
-    std::string answer = Console::Input();
-    wq.setAnswer(answer);
+    wq.setAnswer(Console::Input());
     workingQuiz.addQuestion(wq);
-    Console::Reset();
-    Console::Print("Question created.\n\n");
+    SuccessMsg("Question created.\n\n");
     PollCommand();
 }
 
 void Application::AddQuestionTF() {
     // TODO: actually make true/false question and stuff
+    SuccessMsg("Question created.\n\n");
+    PollCommand();
+}
+
+void Application::TakeQuiz(bool autosect) {
+    // TODO: handle autosect arg
+
+    std::string header = " TAKING QUIZ: '" + workingQuiz.getName() + "' ";
+    Console::SetColor(Console::BLUE);
+    Console::Print("\n" + header + "\n");
+    Console::Reset();
+    for (int i = 0; i < header.length(); i++) {
+        Console::Print("-");
+    }
+    Console::Print("\n\n");
+
+    int qNum = 1;
+    int score = 0;
+    int maxScore = workingQuiz.getQuestions().size();
+
+    for (int i = 0; i < workingQuiz.getQuestions().size(); i++) {
+        Question q = workingQuiz.getQuestions()[i];
+        Console::Print("- QUESTION " + std::to_string(qNum) + " -\n");
+        Console::SetColor(Console::CYAN);
+        Console::Print(q.getQuestion() + "\n\n");
+        Console::Reset();
+        if (q.getType() == Question::WRITTEN) {
+            Console::Print("Enter answer: ");
+            std::string answer = Console::Input();
+            if (q.check(answer)) {
+                Console::SetColor(Console::GREEN);
+                Console::Print("Correct!\n\n");
+                Console::Reset();
+                score++;
+            }
+            else {
+                Console::SetColor(Console::RED);
+                Console::Print("Incorrect!\n\n");
+                Console::Reset();
+            }
+        }
+
+        else if (q.getType() == Question::MULTIPLE_CHOICE) {
+            Console::Print("Choices:\n");
+            Console::SetColor(Console::CYAN);
+            for (int j = 0; j < q.getChoices().size(); j++) {
+                Console::Print(std::string(1, Util::NumToLetter(j)) + ") " + q.getChoices()[j] + "\n");
+            }
+            Console::Reset();
+            Console::Print("Enter (letter) choice: ");
+            char letterChoice = Console::Input()[0];
+            if (q.check(q.getChoices()[Util::LetterToNum(letterChoice)])) {
+                Console::SetColor(Console::GREEN);
+                Console::Print("Correct!\n\n");
+                Console::Reset();
+                score++;
+            }
+            else {
+                Console::SetColor(Console::RED);
+                Console::Print("Incorrect!\n\n");
+                Console::Reset();
+            }
+        }
+
+        else if (q.getType() == Question::TRUE_FALSE) {
+
+        }
+        qNum++;
+    }
+
+    SuccessMsg("Quiz Finsihed. Score: " + std::to_string(score) + "/" + std::to_string(maxScore) + " (" + std::to_string((int)((float)score / maxScore * 100)) + "%)" + "\n\n");
+    PollCommand();
+}
+
+void Application::Clr() {
+    Console::Clear();
+    PollCommand();
 }
 
 void Application::Err(std::string msg, bool terminate) {

@@ -15,7 +15,7 @@ const std::vector<std::string> CommandHandler::VALID_COMMANDS = {
     "clr",
     "help",
     "create",
-    "name",
+    "rename",
     "addq",
     "take"
 };
@@ -28,7 +28,7 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_ARGS
     { "clr",    { "" }},
     { "help",   { "more" } },
     { "create", { "" } },
-    { "name",   { "" } },
+    { "rename", { "" } },
     { "addq",   { "mc", "wr", "tf" } },
     { "take",   { "autosect", "clr" } }
 };
@@ -38,10 +38,10 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_DIRS
     { "q!",     DIR_ANY },
     { "quit",   DIR_ANY },
     { "q",      DIR_ANY },
-    { "clr",    DIR_ROOT },
+    { "clr",    DIR_ANY },
     { "help",   DIR_ANY },
     { "create", DIR_ROOT },
-    { "name",   DIR_QUIZ },
+    { "rename", DIR_QUIZ },
     { "addq",   DIR_QUIZ },
     { "take",   DIR_QUIZ }
 };
@@ -104,8 +104,7 @@ void CommandHandler::Run(Command command) {
         Application::Quit();
     } 
     else if (cmd == "clr") {
-        Console::Clear();
-        Application::PollCommand();
+        Application::Clr();
     }
     else if (cmd == "help") {
         if (command.hasArg("more")) Application::HelpMore();
@@ -114,8 +113,8 @@ void CommandHandler::Run(Command command) {
     else if (cmd == "create") {
         Application::CreateQuiz();
     }
-    else if (cmd == "name") {
-        Application::NameQuiz();
+    else if (cmd == "rename") {
+        Application::RenameQuiz();
     }
     else if (cmd == "addq") {
         if (command.hasArg("mc")) Application::AddQuestionMC();
@@ -124,7 +123,16 @@ void CommandHandler::Run(Command command) {
         else Application::AddQuestion();	
     }
     else if (cmd == "take") {
-        
+        if (command.hasArg("autosect") && command.hasArg("clr")) {
+            Application::Clr();
+            Application::TakeQuiz(true);
+        }
+        else if (command.hasArg("autosect")) Application::TakeQuiz(true);
+        else if (command.hasArg("clr")) {
+            Application::Clr();
+            Application::TakeQuiz(false);
+        }
+        else Application::TakeQuiz(false);
     }
 }
 

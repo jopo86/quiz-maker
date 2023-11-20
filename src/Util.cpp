@@ -53,6 +53,14 @@ std::string Util::ToUpper(std::string str) {
     return upper;
 }
 
+char Util::NumToLetter(int i) {
+    return LOWER[i];
+}
+
+int Util::LetterToNum(char c) {
+    return Find(LOWER, sizeof(LOWER) / sizeof(char), c);
+}
+
 bool Util::EqualsIgnoreCase(std::string a, std::string b) {
     return ToLower(a) == ToLower(b);
 }

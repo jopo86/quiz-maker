@@ -18,6 +18,7 @@ public:
 
 	static const int WRITTEN = 0;
 	static const int MULTIPLE_CHOICE = 1;
+	static const int TRUE_FALSE = 2;
 
 	Question() : type(-1) {}
 	Question(const int type);
@@ -28,6 +29,7 @@ public:
 	const int getType();
 	std::string getQuestion();
 	std::string getAnswer();
+	std::vector<std::string> getChoices();
 	bool check(std::string answer);
 	bool isChoice(std::string choice);
 };
