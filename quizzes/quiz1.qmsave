@@ -1,0 +1,24 @@
+# This is a file format that I will use to save/load quizzes.
+# TODO: make a parser for this format
+
+name = "cool quiz";
+questions = {
+    {
+        type = "wr";
+        question = "what is 2 + 2";
+        ans = "4";
+    },
+    {
+        type = "mc";
+        question = "what is 2 + 2";
+        choices = {
+            "2", "3", "4", "5"
+        };
+        ans = "4";
+    },
+    {
+        type = "tf";
+        question = "2 + 2 = 4";
+        ans = "t";
+    }
+};

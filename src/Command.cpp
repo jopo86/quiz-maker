@@ -25,9 +25,9 @@ Command Command::Parse(std::string str) {
             continue;
         }
         
-        if (argIndex == -1) cmd.append(Util::ToLower({ c }));
+        if (argIndex == -1) cmd += Util::ToLower(c);
         else {
-            args[argIndex].append(Util::ToLower({ c }));
+            args[argIndex] += Util::ToLower(c);
         }
     }
 

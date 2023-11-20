@@ -14,6 +14,7 @@ const std::vector<std::string> CommandHandler::VALID_COMMANDS = {
     "q",
     "clr",
     "help",
+    "docs",
     "create",
     "rename",
     "addq",
@@ -27,6 +28,7 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_ARGS
     { "q",      { "" } },
     { "clr",    { "" }},
     { "help",   { "more" } },
+    { "docs",   { "" } },
     { "create", { "" } },
     { "rename", { "" } },
     { "addq",   { "mc", "wr", "tf" } },
@@ -40,6 +42,7 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_DIRS
     { "q",      DIR_ANY },
     { "clr",    DIR_ANY },
     { "help",   DIR_ANY },
+    { "docs",   DIR_ANY},
     { "create", DIR_ROOT },
     { "rename", DIR_QUIZ },
     { "addq",   DIR_QUIZ },
@@ -109,7 +112,10 @@ void CommandHandler::Run(Command command) {
     else if (cmd == "help") {
         if (command.hasArg("more")) Application::HelpMore();
         else Application::Help();
-    } 
+    }
+    else if (cmd == "docs") {
+        Application::Docs();
+    }
     else if (cmd == "create") {
         Application::CreateQuiz();
     }

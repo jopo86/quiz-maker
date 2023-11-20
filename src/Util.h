@@ -37,15 +37,17 @@ public:
         return Find(vec, elem) != -1;
     }
 
-    static bool IsLower(char c);
-    static bool IsUpper(char c);
-    static bool IsLetter(char c);
-    static bool IsDigit(char c);
-    static bool IsAlpha(char c);
-    static bool IsWhitespace(char c);
-    static bool IsPunctuation(char c);
-    static bool IsSpecial(char c);
+    static bool IsLower(const char c);
+    static bool IsUpper(const char c);
+    static bool IsLetter(const char c);
+    static bool IsDigit(const char c);
+    static bool IsAlpha(const char c);
+    static bool IsWhitespace(const char c);
+    static bool IsPunctuation(const char c);
+    static bool IsSpecial(const char c);
 
+    static char ToLower(const char c);
+    static char ToUpper(const char c);
     static std::string ToLower(std::string str);
     static std::string ToUpper(std::string str);
 

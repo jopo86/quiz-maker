@@ -53,6 +53,7 @@ void Application::Help() {
     Console::Print("q / quit   : quit program\n");
     Console::Print("q! / quit! : force quit program\n");
     Console::Print("help       : display this help message\n");
+    Console::Print("docs       : open documentation in browser");
     Console::Print("create     : create new quiz\n");
     Console::Print("rename     : rename quiz\n");
     Console::Print("addq       : add question\n");
@@ -66,20 +67,30 @@ void Application::Help() {
 void Application::HelpMore() {
     Console::SetColor(Console::GREEN);
     Console::Print("(may have to expand window to see table correctly)\n");
-    Console::Print("-----------------------------------------------------------------------------------------------------------------------------\n");
-    Console::Print("|     COMMAND     |         EXPLANATION         |     ARGUMENTS    |             ARGS EXPLANATION             |  DIRECTORY  |\n");
-    Console::Print("|---------------------------------------------------------------------------------------------------------------------------|\n");
-    Console::Print("|     q / quit    |        quit program         |       none       |                   N/A                    |     any     |\n");
-    Console::Print("|    q! / quit!   |      force quit program     |       none       |                   N/A                    |     any     |\n");
-    Console::Print("|      help       |     display help message    |       -more      |       more detailed help msg (this)      |     any     |\n");
-    Console::Print("|     create      |       create new quiz       |       none       |                   N/A                    |     Root    |\n");
-    Console::Print("|     rename      |         rename quiz         |       none       |                   N/A                    |     Quiz    |\n");
-    Console::Print("|      addq       |         add question        |   -mc, -wr, -tf  |   multiple choice, written, true/false   |     Quiz    |\n");
-    Console::Print("|      take       |          take quiz          |  -autosect, -clr |   auto make quiz sections, clear screen  |     Quiz    |\n");
-    Console::Print("|      clr        |         clear screen        |       none       |                   N/A                    |     Root    |\n");
-    Console::Print("|                 |                             |                  |                                          |             |\n");
-    Console::Print("-----------------------------------------------------------------------------------------------------------------------------\n");
+    Console::Print("-------------------------------------------------------------------------------------------------------------------------------\n");
+    Console::Print("|     COMMAND     |          EXPLANATION          |     ARGUMENTS    |             ARGS EXPLANATION             |  DIRECTORY  |\n");
+    Console::Print("|-----------------------------------------------------------------------------------------------------------------------------|\n");
+    Console::Print("|     q / quit    |         quit program          |       none       |                   N/A                    |     any     |\n");
+    Console::Print("|    q! / quit!   |       force quit program      |       none       |                   N/A                    |     any     |\n");
+    Console::Print("|      help       |      display help message     |       -more      |       more detailed help msg (this)      |     any     |\n");
+    Console::Print("|      docs       | open documentation in browser |       none       |                   N/A                    |     any     |\n");
+    Console::Print("|     create      |        create new quiz        |       none       |                   N/A                    |     Root    |\n");
+    Console::Print("|     rename      |          rename quiz          |       none       |                   N/A                    |     Quiz    |\n");
+    Console::Print("|      addq       |          add question         |   -mc, -wr, -tf  |   multiple choice, written, true/false   |     Quiz    |\n");
+    Console::Print("|      take       |           take quiz           |  -autosect, -clr |   auto make quiz sections, clear screen  |     Quiz    |\n");
+    Console::Print("|      clr        |          clear screen         |       none       |                   N/A                    |     Root    |\n");
+    Console::Print("|                 |                               |                  |                                          |             |\n");
+    Console::Print("-------------------------------------------------------------------------------------------------------------------------------\n");
     Console::Print("\n");
+    Console::Reset();
+    PollCommand();
+}
+
+void Application::Docs() {
+    Util::OpenLink("https://github.com/jopo86/QuizMaker/wiki/Documentation");
+    SuccessMsg("Attempted to open link in browser. If it doesn't open, use this link:\n");
+    Console::SetColor(Console::CYAN);
+    Console::Print("https://github.com/jopo86/QuizMaker/wiki/Documentation\n\n");
     Console::Reset();
     PollCommand();
 }
@@ -133,13 +144,13 @@ void Application::AddQuestionMC() {
         }
     }
     Console::Print("Enter correct choice:\n");
-    std::string answer = Console::Input();
-    if (!mcq.isChoice(answer)) {
-        Err("answer '" + answer + "' not found in choices, question creation aborted", false);
+    std::string ans = Console::Input();
+    if (!mcq.isChoice(ans)) {
+        Err("answer '" + ans + "' not found in choices, question creation aborted", false);
         dir = "Quiz";
         return;
     }
-    mcq.setAnswer(answer);
+    mcq.setAnswer(ans);
     workingQuiz.addQuestion(mcq);
     SuccessMsg("Question created.\n\n");
     PollCommand();
@@ -157,7 +168,17 @@ void Application::AddQuestionWR() {
 }
 
 void Application::AddQuestionTF() {
-    // TODO: actually make true/false question and stuff
+    Question tfq(Question::TRUE_FALSE);
+    Console::Print("Enter Question: \n");
+    tfq.setQuestion(Console::Input());
+    Console::Print("Enter answer (T/F): ");
+    const char ans = Util::ToLower(Console::Input()[0]);
+    if (!(ans == 't' || ans == 'f')) {
+        Err("response must start with T/t or F/f, question creation aborted", false);
+        return;
+    }
+    tfq.setAnswer({ ans });
+    workingQuiz.addQuestion(tfq);
     SuccessMsg("Question created.\n\n");
     PollCommand();
 }
@@ -223,7 +244,19 @@ void Application::TakeQuiz(bool autosect) {
         }
 
         else if (q.getType() == Question::TRUE_FALSE) {
-
+            Console::Print("Enter answer (T/F): ");
+            char ans = Util::ToLower(Console::Input()[0]);
+            if (q.check({ ans })) {
+                Console::SetColor(Console::GREEN);
+                Console::Print("Correct!\n\n");
+                Console::Reset();
+                score++;
+            }
+            else {
+                Console::SetColor(Console::RED);
+                Console::Print("Incorrect!\n\n");
+                Console::Reset();
+            }
         }
         qNum++;
     }

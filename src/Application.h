@@ -28,6 +28,7 @@ public:
     // Commands
     static void Help();
     static void HelpMore();
+    static void Docs();
     static void CreateQuiz();
     static void RenameQuiz();
     static void AddQuestion();
