@@ -2,8 +2,9 @@
 
 #include "Util.h"
 #include "Quiz.h"
+#include "Question.h"
 
-class QMSave {
+class QMS {
 public:
     static void Save(Quiz quiz, std::string path);
     static Quiz Load(std::string path);

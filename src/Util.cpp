@@ -5,6 +5,17 @@ const char Util::UPPER[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 const std::string Util::FILE_NOT_FOUND_ERROR = "L7YVPT6KNZBGKAMRXJUGVVTRDDSZTPU6GBQPS6WCZMGTV4BF9KAWW6D7JPJN6ASV";
 
+int Util::Find(std::string str, char c) {
+    for (int i = 0; i < str.length(); i++) {
+        if (str[i] == c) return i;
+    }
+    return -1;
+}
+
+bool Util::Contains(std::string str, char c) {
+    return Find(str, c) != -1;
+}
+
 bool Util::IsLower(const char c) {
     return Contains(LOWER, sizeof(LOWER) / sizeof(char), c);
 }
@@ -82,6 +93,20 @@ std::string Util::Substr(std::string str, int start, int end) {
         substr += str[i];
     }
     return substr;
+}
+
+std::vector<std::string> Util::Split(std::string str, char delim) {
+    std::vector<std::string> split;
+    std::string curr = "";
+    for (int i = 0; i < str.length(); i++) {
+        if (str[i] == delim) {
+            split.push_back(curr);
+            curr = "";
+        }
+        else curr += str[i];
+    }
+    split.push_back(curr);
+    return split;
 }
 
 #ifdef _WIN32

@@ -12,6 +12,7 @@ const std::vector<std::string> CommandHandler::VALID_COMMANDS = {
     "q!",
     "quit",
     "q",
+    "root",
     "clr",
     "help",
     "docs",
@@ -19,7 +20,8 @@ const std::vector<std::string> CommandHandler::VALID_COMMANDS = {
     "rename",
     "addq",
     "take",
-    "save"
+    "save",
+    "load"
 };
 
 const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_ARGS = {
@@ -27,6 +29,7 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_ARGS
     { "q!",     { "" } },
     { "quit",   { "" } },
     { "q",      { "" } },
+    { "root",   { "" } },
     { "clr",    { "" }},
     { "help",   { "more" } },
     { "docs",   { "" } },
@@ -34,7 +37,8 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_ARGS
     { "rename", { "" } },
     { "addq",   { "mc", "wr", "tf" } },
     { "take",   { "autosect", "clr" } },
-    { "save",   { "" } }
+    { "save",   { "" } },
+    { "load",   { "" } }
 };
 
 const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_DIRS = {
@@ -42,6 +46,7 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_DIRS
     { "q!",     DIR_ANY },
     { "quit",   DIR_ANY },
     { "q",      DIR_ANY },
+    { "root",   DIR_ANY },
     { "clr",    DIR_ANY },
     { "help",   DIR_ANY },
     { "docs",   DIR_ANY},
@@ -49,7 +54,8 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_DIRS
     { "rename", DIR_QUIZ },
     { "addq",   DIR_QUIZ },
     { "take",   DIR_QUIZ },
-    { "save",   DIR_QUIZ }
+    { "save",   DIR_QUIZ },
+    { "load",   DIR_ROOT }
 };
 
 std::string CommandHandler::err = "";
@@ -108,7 +114,10 @@ void CommandHandler::Run(Command command) {
     } 
     else if (cmd == "quit" || cmd == "q") {
         Application::Quit();
-    } 
+    }
+    else if (cmd == "root") {
+        Application::Root();
+    }
     else if (cmd == "clr") {
         Application::Clr();
     }
@@ -145,6 +154,9 @@ void CommandHandler::Run(Command command) {
     }
     else if (cmd == "save") {
         Application::SaveQuiz();
+    }
+    else if (cmd == "load") {
+        Application::LoadQuiz();
     }
 }
 

@@ -25,6 +25,7 @@ public:
 	Question(const int type, std::string question, std::string answer);
 	void setQuestion(std::string question);
 	void setAnswer(std::string answer);
+	void setChoices(std::vector<std::string> choices);
 	void addChoice(std::string choice);
 	const int getType();
 	std::string getQuestion();

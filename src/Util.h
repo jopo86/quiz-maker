@@ -30,6 +30,8 @@ public:
         return Find(vec.data(), vec.size(), elem);
     }
 
+    static int Find(std::string str, char c);
+
     template<typename T>
     static bool Contains(const T* arr, size_t len, T elem) {
         return Find(arr, len, elem) != -1;
@@ -39,6 +41,8 @@ public:
     static bool Contains(std::vector<T> vec, T elem) {
         return Find(vec, elem) != -1;
     }
+
+    static bool Contains(std::string str, char c);
 
     static bool IsLower(const char c);
     static bool IsUpper(const char c);
@@ -60,6 +64,7 @@ public:
     static bool EqualsIgnoreCase(std::string a, std::string b);
 
     static std::string Substr(std::string str, int start, int end);
+    static std::vector<std::string> Split(std::string str, char delim);
 
     static void OpenLink(std::string link);
 

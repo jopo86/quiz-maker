@@ -1,6 +1,6 @@
 #pragma once
 
-#define VERSION "0.0.2 (dev)"
+#define VERSION "0.1.0 (alpha)"
 
 #include <iostream>
 #include <string>
@@ -9,7 +9,7 @@
 #include "Console.h"
 #include "Quiz.h"
 #include "Command.h"
-#include "QMSave.h"
+#include "QMS.h"
 
 class Application {
 private:
@@ -39,6 +39,7 @@ public:
     static void TakeQuiz(bool autosect);
     static void SaveQuiz();
     static void LoadQuiz();
+    static void Root();
     static void Clr();
     static void Err(std::string msg, bool terminate);
     static void Quit();

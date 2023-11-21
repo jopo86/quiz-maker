@@ -4,7 +4,7 @@ This project is still in development.
 
 ## Installation
 To install, simply download the zip file below, extract it, and run QuizMaker.exe under the QuizMaker folder. Once downloaded, you can move the QuizMaker folder anywhere.  
-[Latest Release](https://mega.nz/file/aophBIiK#xXcueFUv5g1h_J3orSLPaDkxlnBG6ds08kCDMwyA4_Q)  
+[Latest Release (0.1.0-alpha)](https://mega.nz/file/S8xTXCaC#WTrVAfXbHOqeEbsJOS01-MBW9qSSXGNM3woWWvI5-Qw)  
 [All Releases](https://mega.nz/folder/Xlxk0JhR#GEoC0FFyyR9OX82k4XjYNg)
 
 Windows may stop the program from running, this is because it does not recognize the application, which is normal. If this happens click 'More Info' and then 'Run anway'.

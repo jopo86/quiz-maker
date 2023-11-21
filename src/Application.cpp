@@ -14,8 +14,7 @@ void Application::Start() {
     Console::Reset();
     for (int i = 0; i < title.length(); i++) {
         Console::Print("~");
-    }
-
+    };
     Console::Print("\n\nEnter 'help' for a list of commands.\n\n");
 
     PollCommand();
@@ -52,6 +51,7 @@ void Application::Help() {
     Console::Print("COMMANDS:\n");
     Console::Print("q / quit   : quit program\n");
     Console::Print("q! / quit! : force quit program\n");
+    Console::Print("root       : go to root directory\n");
     Console::Print("help       : display this help message\n");
     Console::Print("docs       : open documentation in browser");
     Console::Print("create     : create new quiz\n");
@@ -59,6 +59,8 @@ void Application::Help() {
     Console::Print("addq       : add question\n");
     Console::Print("take       : take quiz\n");
     Console::Print("clr        : clear screen\n");
+    Console::Print("save       : save quiz to path\n");
+    Console::Print("load       : load quiz from path\n");
     Console::Print("\n");
     Console::Reset();
     PollCommand();
@@ -72,6 +74,7 @@ void Application::HelpMore() {
     Console::Print("|-----------------------------------------------------------------------------------------------------------------------------|\n");
     Console::Print("|     q / quit    |         quit program          |       none       |                   N/A                    |     any     |\n");
     Console::Print("|    q! / quit!   |       force quit program      |       none       |                   N/A                    |     any     |\n");
+    Console::Print("|      root       |      go to root directory     |       none       |                   N/A                    |     any     |\n");
     Console::Print("|      help       |      display help message     |       -more      |       more detailed help msg (this)      |     any     |\n");
     Console::Print("|      docs       | open documentation in browser |       none       |                   N/A                    |     any     |\n");
     Console::Print("|     create      |        create new quiz        |       none       |                   N/A                    |     Root    |\n");
@@ -79,9 +82,11 @@ void Application::HelpMore() {
     Console::Print("|      addq       |          add question         |   -mc, -wr, -tf  |   multiple choice, written, true/false   |     Quiz    |\n");
     Console::Print("|      take       |           take quiz           |  -autosect, -clr |   auto make quiz sections, clear screen  |     Quiz    |\n");
     Console::Print("|      clr        |          clear screen         |       none       |                   N/A                    |     Root    |\n");
+    Console::Print("|      save       |       save quiz to path       |       none       |                   N/A                    |     Quiz    |\n");
+    Console::Print("|      load       |      load quiz from path      |       none       |                   N/A                    |     Root    |\n");
     Console::Print("|                 |                               |                  |                                          |             |\n");
     Console::Print("-------------------------------------------------------------------------------------------------------------------------------\n");
-    Console::Print("\n");
+    Console::Print("Use 'docs' to see full documentation.\n");
     Console::Reset();
     PollCommand();
 }
@@ -266,23 +271,45 @@ void Application::TakeQuiz(bool autosect) {
 }
 
 void Application::SaveQuiz() {
-    std::string path = "test_quizzes/" + workingQuiz.getName() + ".qmsave";
-    QMSave::Save(workingQuiz, path);
-    SuccessMsg("Quiz saved to " + path + ".\n\n");
+    Console::Print("Enter path to save quiz to (relative to location of QuizMaker.exe, or absolute):\n");
+    std::string path = Console::Input();
+    QMS::Save(workingQuiz, path);
+    SuccessMsg("Quiz saved to '" + path + "'.\n\n");
     PollCommand();
 }
 
 void Application::LoadQuiz() {
-    std::string path = "test_quizzes/quiz.qmsave";
+    Console::Print("Enter path to load quiz from (relative to location of QuizMaker.exe, or absolute):\n");
+    std::string path = Console::Input();
     if (Util::ReadFile(path) == Util::FILE_NOT_FOUND_ERROR) {
         Err("path '" + path + "' not found, quiz loading aborted", false);
         return;
     }
     else {
-        workingQuiz = QMSave::Load(path);
+        workingQuiz = QMS::Load(path);
         dir = "Quiz";
     }
+    SuccessMsg("Quiz loaded from '" + path + "'.\n\n");
     PollCommand();
+}
+
+void Application::Root() {
+    Console::Print("Are you sure you want to go back to root directory? Progress may be lost. (y/n)\n");
+    std::string response = Console::Input();
+    Console::Print("\n");
+    if (response == "y") {
+        workingQuiz = Quiz();
+        dir = "";
+        PollCommand();
+    }
+    else if (response == "n") {
+        Console::Print("\n");
+        PollCommand();
+    }
+    else {
+        Err("unhandled response '" + response + "'\n\n", false);
+        PollCommand();
+    }
 }
 
 void Application::Clr() {

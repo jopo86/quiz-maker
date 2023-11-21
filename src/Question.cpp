@@ -1,14 +1,16 @@
 #include "Question.h"
 
-Question::Question(const int type) : type(type) {
+Question::Question(int type) {
+	this->type = type;
 	question = "";
 	answer = "";
 	choices = {};
 }
 
-Question::Question(const int type, std::string question, std::string answer) : type(type) {
+Question::Question(int type, std::string question, std::string answer) {
+	this->type = type;
 	this->question = question;
-	this;
+	this->answer = answer;
 	choices = {};
 }
 
@@ -18,6 +20,11 @@ void Question::setQuestion(std::string question) {
 
 void Question::setAnswer(std::string answer) {
 	this->answer = answer;
+}
+
+void Question::setChoices(std::vector<std::string> choices) {
+	if (!(type == MULTIPLE_CHOICE)) throw "Cannot set choices, question is not multiple choice";
+	this->choices = choices;
 }
 
 void Question::addChoice(std::string choice) {
