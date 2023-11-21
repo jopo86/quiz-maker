@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 
 #include <windows.h>
 #include <shellapi.h>
@@ -14,6 +15,8 @@ private:
     static const char UPPER[];
 
 public:
+    static const std::string FILE_NOT_FOUND_ERROR;
+
     template<typename T>
     static int Find(const T* arr, size_t len, T elem) {
         for (int i = 0; i < len; i++) {
@@ -56,5 +59,10 @@ public:
 
     static bool EqualsIgnoreCase(std::string a, std::string b);
 
+    static std::string Substr(std::string str, int start, int end);
+
     static void OpenLink(std::string link);
+
+    static void WriteFile(std::string path, std::string text);
+    static std::string ReadFile(std::string path);
 };

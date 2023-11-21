@@ -265,6 +265,26 @@ void Application::TakeQuiz(bool autosect) {
     PollCommand();
 }
 
+void Application::SaveQuiz() {
+    std::string path = "test_quizzes/" + workingQuiz.getName() + ".qmsave";
+    QMSave::Save(workingQuiz, path);
+    SuccessMsg("Quiz saved to " + path + ".\n\n");
+    PollCommand();
+}
+
+void Application::LoadQuiz() {
+    std::string path = "test_quizzes/quiz.qmsave";
+    if (Util::ReadFile(path) == Util::FILE_NOT_FOUND_ERROR) {
+        Err("path '" + path + "' not found, quiz loading aborted", false);
+        return;
+    }
+    else {
+        workingQuiz = QMSave::Load(path);
+        dir = "Quiz";
+    }
+    PollCommand();
+}
+
 void Application::Clr() {
     Console::Clear();
     PollCommand();

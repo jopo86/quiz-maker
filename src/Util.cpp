@@ -3,6 +3,8 @@
 const char Util::LOWER[] = "abcdefghijklmnopqrstuvwxyz";
 const char Util::UPPER[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
+const std::string Util::FILE_NOT_FOUND_ERROR = "L7YVPT6KNZBGKAMRXJUGVVTRDDSZTPU6GBQPS6WCZMGTV4BF9KAWW6D7JPJN6ASV";
+
 bool Util::IsLower(const char c) {
     return Contains(LOWER, sizeof(LOWER) / sizeof(char), c);
 }
@@ -74,6 +76,14 @@ bool Util::EqualsIgnoreCase(std::string a, std::string b) {
     return ToLower(a) == ToLower(b);
 }
 
+std::string Util::Substr(std::string str, int start, int end) {
+    std::string substr;
+    for (int i = start; i < end; i++) {
+        substr += str[i];
+    }
+    return substr;
+}
+
 #ifdef _WIN32
 void Util::OpenLink(std::string link) {
     ShellExecuteA(NULL, "open", link.c_str(), NULL, NULL, SW_SHOWNORMAL);
@@ -84,3 +94,24 @@ void Util::OpenLink(std::string link) {
     system(cmd.c_str());
 }
 #endif
+
+void Util::WriteFile(std::string contents, std::string path) {
+    std::ofstream file;
+    file.open(path);
+    file << contents;
+    file.close();
+}
+
+std::string Util::ReadFile(std::string path) {
+    std::string whole;
+    std::string line;
+    std::ifstream file(path);
+    if (file.is_open()) {
+        while (std::getline(file, line)) {
+            whole += line + '\n';
+        }
+        file.close();
+        return whole;
+    }
+    else return FILE_NOT_FOUND_ERROR;
+}

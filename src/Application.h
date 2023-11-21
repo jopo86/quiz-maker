@@ -9,6 +9,7 @@
 #include "Console.h"
 #include "Quiz.h"
 #include "Command.h"
+#include "QMSave.h"
 
 class Application {
 private:
@@ -36,6 +37,8 @@ public:
     static void AddQuestionWR();
     static void AddQuestionTF();
     static void TakeQuiz(bool autosect);
+    static void SaveQuiz();
+    static void LoadQuiz();
     static void Clr();
     static void Err(std::string msg, bool terminate);
     static void Quit();

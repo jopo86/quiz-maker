@@ -4,7 +4,8 @@
 
 int main()
 {
-	Application::Start();
+	// Application::Start();
+	QMSave::Load("test_quizzes/quiz.qmsave");
 
 	return 0;
 }

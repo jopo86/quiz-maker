@@ -18,7 +18,8 @@ const std::vector<std::string> CommandHandler::VALID_COMMANDS = {
     "create",
     "rename",
     "addq",
-    "take"
+    "take",
+    "save"
 };
 
 const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_ARGS = {
@@ -32,7 +33,8 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_ARGS
     { "create", { "" } },
     { "rename", { "" } },
     { "addq",   { "mc", "wr", "tf" } },
-    { "take",   { "autosect", "clr" } }
+    { "take",   { "autosect", "clr" } },
+    { "save",   { "" } }
 };
 
 const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_DIRS = {
@@ -46,7 +48,8 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_DIRS
     { "create", DIR_ROOT },
     { "rename", DIR_QUIZ },
     { "addq",   DIR_QUIZ },
-    { "take",   DIR_QUIZ }
+    { "take",   DIR_QUIZ },
+    { "save",   DIR_QUIZ }
 };
 
 std::string CommandHandler::err = "";
@@ -139,6 +142,9 @@ void CommandHandler::Run(Command command) {
             Application::TakeQuiz(false);
         }
         else Application::TakeQuiz(false);
+    }
+    else if (cmd == "save") {
+        Application::SaveQuiz();
     }
 }
 
