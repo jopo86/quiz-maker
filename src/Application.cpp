@@ -53,10 +53,13 @@ void Application::Help() {
     Console::Print("q! / quit! : force quit program\n");
     Console::Print("root       : go to root directory\n");
     Console::Print("help       : display this help message\n");
-    Console::Print("docs       : open documentation in browser");
+    Console::Print("docs       : open documentation in browser\n");
     Console::Print("create     : create new quiz\n");
     Console::Print("rename     : rename quiz\n");
     Console::Print("addq       : add question\n");
+    Console::Print("listq      : list all questions\n");
+    Console::Print("editq      : edit a question\n");
+    Console::Print("delq       : delete a question\n");
     Console::Print("take       : take quiz\n");
     Console::Print("clr        : clear screen\n");
     Console::Print("save       : save quiz to path\n");
@@ -80,6 +83,9 @@ void Application::HelpMore() {
     Console::Print("|     create      |        create new quiz        |       none       |                   N/A                    |     Root    |\n");
     Console::Print("|     rename      |          rename quiz          |       none       |                   N/A                    |     Quiz    |\n");
     Console::Print("|      addq       |          add question         |   -mc, -wr, -tf  |   multiple choice, written, true/false   |     Quiz    |\n");
+    Console::Print("|     listq       |       list all questions      |      -more       |            more detailed list            |     Quiz    |\n");
+    Console::Print("|     editq       |        edit a question        |    -q, -c, -a    |   edit question, choices, and/or answer  |     Quiz    |\n");
+    Console::Print("|     delq        |       delete a question       |       none       |                   N/A                    |     Quiz    |\n");
     Console::Print("|      take       |           take quiz           |  -autosect, -clr |   auto make quiz sections, clear screen  |     Quiz    |\n");
     Console::Print("|      clr        |          clear screen         |       none       |                   N/A                    |     Root    |\n");
     Console::Print("|      save       |       save quiz to path       |       none       |                   N/A                    |     Quiz    |\n");
@@ -188,6 +194,43 @@ void Application::AddQuestionTF() {
     PollCommand();
 }
 
+void Application::ListQuestions(bool more) {
+    for (int i = 0; i < workingQuiz.getQuestions().size(); i++) {
+        Console::Reset();
+        Question q = workingQuiz.getQuestions()[i];
+        int qNum = i + 1;
+        Console::Print(std::to_string(qNum) + ") " + q.getQuestion() + "\n");
+
+        if (more) {
+            Console::SetColor(Console::BLUE);
+            int _type = q.getType();
+            std::string type;
+            if (_type == Question::WRITTEN) type = "written";
+            else if (_type == Question::MULTIPLE_CHOICE) type = "multiple choice";
+            else if (_type == Question::TRUE_FALSE) type = "true/false";
+            Console::Print("Type: " + type + "\n");
+            if (_type == Question::MULTIPLE_CHOICE) {
+                Console::Print("Choices: \n");
+                for (int j = 0; j < q.getChoices().size(); j++) {
+                    Console::Print(std::string(1, Util::NumToLetter(j)) + ") " + q.getChoices()[j] + "\n");
+                }
+            }
+            Console::Print("Answer: " + q.getAnswer() + "\n\n");
+            SuccessMsg("End of list.\n");
+        }
+    }
+    Console::Print("\n");
+    PollCommand();
+}
+
+void Application::EditQuestion(bool q, bool c, bool a) {
+
+}
+
+void Application::DeleteQuestion() {
+
+}
+
 void Application::TakeQuiz(bool autosect) {
     // TODO: handle autosect arg
 
@@ -283,12 +326,11 @@ void Application::LoadQuiz() {
     std::string path = Console::Input();
     if (Util::ReadFile(path) == Util::FILE_NOT_FOUND_ERROR) {
         Err("path '" + path + "' not found, quiz loading aborted", false);
+        PollCommand();
         return;
     }
-    else {
-        workingQuiz = QMS::Load(path);
-        dir = "Quiz";
-    }
+    workingQuiz = QMS::Load(path);
+    dir = "Quiz";
     SuccessMsg("Quiz loaded from '" + path + "'.\n\n");
     PollCommand();
 }
@@ -296,10 +338,10 @@ void Application::LoadQuiz() {
 void Application::Root() {
     Console::Print("Are you sure you want to go back to root directory? Progress may be lost. (y/n)\n");
     std::string response = Console::Input();
-    Console::Print("\n");
     if (response == "y") {
         workingQuiz = Quiz();
         dir = "";
+        Console::Print("\n");
         PollCommand();
     }
     else if (response == "n") {
@@ -307,7 +349,7 @@ void Application::Root() {
         PollCommand();
     }
     else {
-        Err("unhandled response '" + response + "'\n\n", false);
+        Err("unhandled response '" + response, false);
         PollCommand();
     }
 }

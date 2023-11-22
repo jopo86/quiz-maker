@@ -19,6 +19,9 @@ const std::vector<std::string> CommandHandler::VALID_COMMANDS = {
     "create",
     "rename",
     "addq",
+    "listq",
+    "editq",
+    "delq",
     "take",
     "save",
     "load"
@@ -36,6 +39,9 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_ARGS
     { "create", { "" } },
     { "rename", { "" } },
     { "addq",   { "mc", "wr", "tf" } },
+    { "listq",  { "more" } },
+    { "editq",  { "q", "c", "a" } },
+    { "delq",   { "" } },
     { "take",   { "autosect", "clr" } },
     { "save",   { "" } },
     { "load",   { "" } }
@@ -53,6 +59,9 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_DIRS
     { "create", DIR_ROOT },
     { "rename", DIR_QUIZ },
     { "addq",   DIR_QUIZ },
+    { "listq",  DIR_QUIZ },
+    { "editq",  DIR_QUIZ },
+    { "delq",   DIR_QUIZ },
     { "take",   DIR_QUIZ },
     { "save",   DIR_QUIZ },
     { "load",   DIR_ROOT }
@@ -99,7 +108,7 @@ bool CommandHandler::Verify(Command command) {
 
     err = "command '" + cmd + "' can only be called from directory: ";
     for (int i = 0; i < VALID_DIRS.at(cmd).size(); i++) {
-        err += "'" + VALID_DIRS.at(cmd)[i] + "' ";
+        err += "'" + (VALID_DIRS.at(cmd)[i] == "" ? "root" : VALID_DIRS.at(cmd)[i]) + "' " + (i == VALID_DIRS.at(cmd).size() - 1 ? "" : "or ");
     }
     err += "\nUse 'help -more' to get a list of commands with their valid directories.";
     return false;
@@ -139,6 +148,16 @@ void CommandHandler::Run(Command command) {
         else if (command.hasArg("wr")) Application::AddQuestionWR();
         else if (command.hasArg("tf")) Application::AddQuestionTF();
         else Application::AddQuestion();	
+    }
+    else if (cmd == "listq") {
+        if (command.hasArg("more")) Application::ListQuestions(true);
+        else Application::ListQuestions(false);
+    }
+    else if (cmd == "editq") {
+        Application::EditQuestion(command.hasArg("q"), command.hasArg("c"), command.hasArg("a"));
+    }
+    else if (cmd == "delq") {
+        Application::DeleteQuestion();
     }
     else if (cmd == "take") {
         if (command.hasArg("autosect") && command.hasArg("clr")) {

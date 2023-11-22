@@ -36,6 +36,9 @@ public:
     static void AddQuestionMC();
     static void AddQuestionWR();
     static void AddQuestionTF();
+    static void ListQuestions(bool more);
+    static void EditQuestion(bool q, bool c, bool a);
+    static void DeleteQuestion();
     static void TakeQuiz(bool autosect);
     static void SaveQuiz();
     static void LoadQuiz();
