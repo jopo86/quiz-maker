@@ -31,6 +31,7 @@ public:
     }
 
     static int Find(std::string str, char c);
+    static int Find(std::string str, std::string substr);
 
     template<typename T>
     static bool Contains(const T* arr, size_t len, T elem) {
@@ -43,6 +44,7 @@ public:
     }
 
     static bool Contains(std::string str, char c);
+    static bool Contains(std::string str, std::string substr);
 
     static bool IsLower(const char c);
     static bool IsUpper(const char c);

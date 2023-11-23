@@ -322,7 +322,28 @@ void Application::EditQuestion(bool q, bool c, bool a, int qNum) {
 }
 
 void Application::DeleteQuestion() {
-    Console::Print("This command is implemented in the next release.\n\n");
+    Console::Print("Question # to delete (use 'list' to see question #s): ");
+    std::string response = Console::Input();
+    if (response == "" || !Util::IsNumber(response)) {
+        Err("'" + response + "' is not a number. (aborted)", false);
+        return;
+    }
+    int qNum = std::stoi(response);
+
+    size_t size = workingQuiz.getQuestions().size();
+    if (qNum > size) {
+        Err("too large, quiz only has " + std::to_string(size) + " questions. (aborted)", false);
+        return;
+    }
+
+    std::vector<Question> oldQuestions = workingQuiz.getQuestions();
+    std::vector<Question> newQuestions;
+    for (int i = 0; i < size; i++) {
+        if (i != qNum - 1) newQuestions.push_back(oldQuestions[i]);
+    }
+    workingQuiz.setQuestions(newQuestions);
+    SuccessMsg("Deleted question #" + std::to_string(qNum) + ".\n\n");
+    PollCommand();
 }
 
 void Application::TakeQuiz() {
@@ -413,7 +434,7 @@ void Application::TakeQuiz() {
 
 void Application::SaveQuiz() {
     Console::Print("Enter path to save quiz to (relative to location of QuizMaker.exe, or absolute):\n");
-    std::string path = Console::Input() + ".qms";
+    std::string path = Console::Input();
     QMS::Save(workingQuiz, path);
     SuccessMsg("Quiz saved to '" + path + "'.\n\n");
     PollCommand();
@@ -427,7 +448,13 @@ void Application::LoadQuiz() {
         PollCommand();
         return;
     }
-    workingQuiz = QMS::Load(path);
+    std::pair<Quiz, int> loadpair = QMS::Load(path);
+    if (loadpair.second == -1) {
+        Err("not a .qms file\n\n", false);
+        PollCommand();
+        return;
+    }
+    workingQuiz = loadpair.first;
     dir = "Quiz";
     SuccessMsg("Quiz loaded from '" + path + "'.\n\n");
     PollCommand();
@@ -488,7 +515,7 @@ void Application::Quit() {
 }
 
 void Application::ForceQuit() {
-    return;
+    exit(0);
 }
 
 std::string Application::GetDir() {

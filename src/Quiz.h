@@ -15,9 +15,7 @@ public:
 	Quiz(std::string name);
 	Quiz(std::string name, std::vector<Question> questions);
 
-	void save(std::string path);
-	static Quiz Load(std::string path);
-
+	void setQuestions(std::vector<Question> questions);
 	void addQuestion(Question question);
 	void addQuestions(std::vector<Question> questions);
 

@@ -6,6 +6,6 @@
 
 class QMS {
 public:
-    static void Save(Quiz quiz, std::string path);
-    static Quiz Load(std::string path);
+    static void Save(Quiz quiz, std::string _path);
+    static std::pair<Quiz, int> Load(std::string path);
 };

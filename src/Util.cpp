@@ -12,8 +12,23 @@ int Util::Find(std::string str, char c) {
     return -1;
 }
 
+int Util::Find(std::string str, std::string substr) {
+    for (int i = 0; i < str.length() - substr.length() + 1; i++) {
+        bool found = true;
+        for (int j = 0; j < substr.length(); j++) {
+            if (str[i + j] != substr[j]) found = false;
+        }
+        if (found) return i;
+    }
+    return -1;
+}
+
 bool Util::Contains(std::string str, char c) {
     return Find(str, c) != -1;
+}
+
+bool Util::Contains(std::string str, std::string substr) {
+    return Find(str, substr) != -1;
 }
 
 bool Util::IsLower(const char c) {

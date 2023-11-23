@@ -15,13 +15,8 @@ Quiz::Quiz(std::string name, std::vector<Question> questions) {
 	this->questions = questions;
 }
 
-void Quiz::save(std::string path)
-{
-	// save quiz as json
-}
-
-Quiz Quiz::Load(std::string path) {
-	// load quiz from json
+void Quiz::setQuestions(std::vector<Question> questions) {
+	this->questions = questions;
 }
 
 void Quiz::addQuestion(Question question) {
