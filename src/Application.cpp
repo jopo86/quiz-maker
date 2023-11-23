@@ -86,7 +86,7 @@ void Application::HelpMore() {
     Console::Print("|     listq       |       list all questions      |      -more       |            more detailed list            |     Quiz    |\n");
     Console::Print("|     editq       |        edit a question        |    -q, -c, -a    |   edit question, choices, and/or answer  |     Quiz    |\n");
     Console::Print("|     delq        |       delete a question       |       none       |                   N/A                    |     Quiz    |\n");
-    Console::Print("|      take       |           take quiz           |  -autosect, -clr |   auto make quiz sections, clear screen  |     Quiz    |\n");
+    Console::Print("|      take       |           take quiz           |       none       |                   N/A                    |     Quiz    |\n");
     Console::Print("|      clr        |          clear screen         |       none       |                   N/A                    |     Root    |\n");
     Console::Print("|      save       |       save quiz to path       |       none       |                   N/A                    |     Quiz    |\n");
     Console::Print("|      load       |      load quiz from path      |       none       |                   N/A                    |     Root    |\n");
@@ -138,8 +138,19 @@ void Application::AddQuestion() {
         AddQuestionTF();
     }
     else {
-        Err("unrecognized response: '" + type + "', question creation aborted", false);
+        Err("unrecognized response: '" + type + "'. (aborted)", false);
     }
+}
+
+void Application::AddQuestionWR() {
+    Question wq(Question::WRITTEN);
+    Console::Print("Enter Question: \n");
+    wq.setQuestion(Console::Input());
+    Console::Print("Enter answer:\n");
+    wq.setAnswer(Console::Input());
+    workingQuiz.addQuestion(wq);
+    SuccessMsg("Question created.\n\n");
+    PollCommand();
 }
 
 void Application::AddQuestionMC() {
@@ -157,23 +168,12 @@ void Application::AddQuestionMC() {
     Console::Print("Enter correct choice:\n");
     std::string ans = Console::Input();
     if (!mcq.isChoice(ans)) {
-        Err("answer '" + ans + "' not found in choices, question creation aborted", false);
+        Err("answer '" + ans + "' not found in choices. (aborted)", false);
         dir = "Quiz";
         return;
     }
     mcq.setAnswer(ans);
     workingQuiz.addQuestion(mcq);
-    SuccessMsg("Question created.\n\n");
-    PollCommand();
-}
-
-void Application::AddQuestionWR() {
-    Question wq(Question::WRITTEN);
-    Console::Print("Enter Question: \n");
-    wq.setQuestion(Console::Input());
-    Console::Print("Enter answer:\n");
-    wq.setAnswer(Console::Input());
-    workingQuiz.addQuestion(wq);
     SuccessMsg("Question created.\n\n");
     PollCommand();
 }
@@ -185,7 +185,7 @@ void Application::AddQuestionTF() {
     Console::Print("Enter answer (T/F): ");
     const char ans = Util::ToLower(Console::Input()[0]);
     if (!(ans == 't' || ans == 'f')) {
-        Err("response must start with T/t or F/f, question creation aborted", false);
+        Err("response must start with T/t or F/f. (aborted)", false);
         return;
     }
     tfq.setAnswer({ ans });
@@ -195,6 +195,7 @@ void Application::AddQuestionTF() {
 }
 
 void Application::ListQuestions(bool more) {
+    Console::Print("\n");
     for (int i = 0; i < workingQuiz.getQuestions().size(); i++) {
         Console::Reset();
         Question q = workingQuiz.getQuestions()[i];
@@ -216,24 +217,115 @@ void Application::ListQuestions(bool more) {
                 }
             }
             Console::Print("Answer: " + q.getAnswer() + "\n\n");
-            SuccessMsg("End of list.\n");
         }
     }
-    Console::Print("\n");
+    if (!more) Console::Print("\n");
     PollCommand();
 }
 
-void Application::EditQuestion(bool q, bool c, bool a) {
+void Application::EditQuestion(bool q, bool c, bool a, int qNum) {
+    Console::Reset();
+    if (qNum == -1) {
+        Console::Print("Question # to edit (use 'list' to see question #s): ");
+        std::string response = Console::Input();
+        if (response == "" || !Util::IsNumber(response)) {
+            Err("'" + response + "' is not a number. (aborted)", false);
+            return;
+        }
+        qNum = std::stoi(response);
+    }
+    size_t size = workingQuiz.getQuestions().size();
+    if (qNum > size) {
+        Err("too large, quiz only has " + std::to_string(size) + " questions. (aborted)", false);
+        return;
+    }
 
+    Question oldQuestion = workingQuiz.getQuestions()[qNum - 1];
+    if (oldQuestion.getType() != Question::MULTIPLE_CHOICE && c) {
+        Err("requested to edit choices, but question is not multiple choice. (aborted)", false);
+        return;
+    }
+
+    if (!q && !c && !a) {
+        bool _q, _c, _a = false;
+
+        Console::Print("\nEdit question? (y/n): ");
+        if (Console::Input()[0] == 'y') _q = true;
+
+        if (oldQuestion.getType() == Question::MULTIPLE_CHOICE) {
+            Console::Print("Edit choices? (y/n): ");
+            if (Console::Input()[0] == 'y') _c = true;
+        }
+
+        Console::Print("Edit answer? (y/n): ");
+        if (Console::Input()[0] == 'y') _a = true;
+
+        if (!_q && !_c && !_a) return;
+        EditQuestion(_q, _c, _a, qNum);
+    }
+    else {
+        // create new quiz, add questions before current qNum
+        Quiz newQuiz;
+        newQuiz.setName(workingQuiz.getName());
+        for (int i = 0; i < qNum - 1; i++) {
+            newQuiz.addQuestion(workingQuiz.getQuestions()[i]);
+        }
+
+        // create new question to replace current qNum
+        Question newQuestion(workingQuiz.getQuestions()[qNum - 1].getType());
+
+        if (q) {
+            Console::Print("\nOld question: " + oldQuestion.getQuestion() + "\nEnter new question: ");
+            newQuestion.setQuestion(Console::Input());
+            SuccessMsg("Question updated.\n");
+        }
+        else newQuestion.setQuestion(oldQuestion.getAnswer());
+
+        if (c) {
+            Console::Print("\nOld choices: \n");
+            for (int j = 0; j < oldQuestion.getChoices().size(); j++) {
+                Console::Print(std::string(1, Util::NumToLetter(j)) + ") " + oldQuestion.getChoices()[j] + "\n");
+            }
+            Console::Print("Enter new choices (type '-' when done): \n");
+            std::string choice;
+            while (choice != "-") {
+                choice = Console::Input();
+                if (choice != "-") {
+                    newQuestion.addChoice(choice);
+                }
+            }
+            SuccessMsg("Choices updated.\n");
+        }
+        else if (oldQuestion.getType() == Question::MULTIPLE_CHOICE) {
+            newQuestion.setChoices(oldQuestion.getChoices());
+        }
+
+        if (a) {
+            Console::Print("\nOld answer: " + oldQuestion.getAnswer() + "\nEnter new answer: ");
+            newQuestion.setAnswer(Console::Input());
+            SuccessMsg("Answer updated.\n");
+        }
+        else newQuestion.setAnswer(oldQuestion.getAnswer());
+
+        // add new question
+        newQuiz.addQuestion(newQuestion);
+
+        // add the rest of the questions
+        for (int i = qNum; i < size; i++) {
+            newQuiz.addQuestion(workingQuiz.getQuestions()[i]);
+        }
+        workingQuiz = newQuiz;
+
+        Console::Print("\n");
+        PollCommand();
+    }
 }
 
 void Application::DeleteQuestion() {
-
+    Console::Print("This command is implemented in the next release.\n\n");
 }
 
-void Application::TakeQuiz(bool autosect) {
-    // TODO: handle autosect arg
-
+void Application::TakeQuiz() {
     std::string header = " TAKING QUIZ: '" + workingQuiz.getName() + "' ";
     Console::SetColor(Console::BLUE);
     Console::Print("\n" + header + "\n");
@@ -278,7 +370,13 @@ void Application::TakeQuiz(bool autosect) {
             Console::Reset();
             Console::Print("Enter (letter) choice: ");
             char letterChoice = Console::Input()[0];
-            if (q.check(q.getChoices()[Util::LetterToNum(letterChoice)])) {
+            int numChoice = Util::LetterToNum(letterChoice);
+            if (numChoice >= q.getChoices().size() || numChoice == -1) {
+                Err("choice does not exist. (aborted)", false);
+                PollCommand();
+                return;
+            }
+            if (q.check(q.getChoices()[numChoice])) {
                 Console::SetColor(Console::GREEN);
                 Console::Print("Correct!\n\n");
                 Console::Reset();
@@ -315,7 +413,7 @@ void Application::TakeQuiz(bool autosect) {
 
 void Application::SaveQuiz() {
     Console::Print("Enter path to save quiz to (relative to location of QuizMaker.exe, or absolute):\n");
-    std::string path = Console::Input();
+    std::string path = Console::Input() + ".qms";
     QMS::Save(workingQuiz, path);
     SuccessMsg("Quiz saved to '" + path + "'.\n\n");
     PollCommand();
@@ -325,7 +423,7 @@ void Application::LoadQuiz() {
     Console::Print("Enter path to load quiz from (relative to location of QuizMaker.exe, or absolute):\n");
     std::string path = Console::Input();
     if (Util::ReadFile(path) == Util::FILE_NOT_FOUND_ERROR) {
-        Err("path '" + path + "' not found, quiz loading aborted", false);
+        Err("path '" + path + "' not found. (aborted)", false);
         PollCommand();
         return;
     }
@@ -359,11 +457,17 @@ void Application::Clr() {
     PollCommand();
 }
 
-void Application::Err(std::string msg, bool terminate) {
+void Application::Err(std::string msg, bool fatal) {
     Console::SetColor(Console::RED);
-    Console::Print("ERROR: " + msg + "\n\n");
-    Console::Reset();
-    if (terminate) exit(1);
+    if (fatal) {
+        Console::Print("FATAL ERROR: " + msg + "\n" + "[Enter] to quit.\n");
+        Console::Input();
+        // doesn't poll command here, so program ends
+    }
+    else {
+        Console::Print("ERROR: " + msg + "\n\n");
+        PollCommand();
+    }
 }
 
 void Application::Quit() {

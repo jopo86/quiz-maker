@@ -48,6 +48,7 @@ public:
     static bool IsUpper(const char c);
     static bool IsLetter(const char c);
     static bool IsDigit(const char c);
+    static bool IsNumber(std::string str);
     static bool IsAlpha(const char c);
     static bool IsWhitespace(const char c);
     static bool IsPunctuation(const char c);

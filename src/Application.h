@@ -1,6 +1,6 @@
 #pragma once
 
-#define VERSION "0.1.0 (alpha)"
+#define VERSION "0.2.0 (alpha)"
 
 #include <iostream>
 #include <string>
@@ -33,18 +33,18 @@ public:
     static void CreateQuiz();
     static void RenameQuiz();
     static void AddQuestion();
-    static void AddQuestionMC();
     static void AddQuestionWR();
+    static void AddQuestionMC();
     static void AddQuestionTF();
     static void ListQuestions(bool more);
-    static void EditQuestion(bool q, bool c, bool a);
+    static void EditQuestion(bool q, bool c, bool a, int qNum);
     static void DeleteQuestion();
-    static void TakeQuiz(bool autosect);
+    static void TakeQuiz();
     static void SaveQuiz();
     static void LoadQuiz();
     static void Root();
     static void Clr();
-    static void Err(std::string msg, bool terminate);
+    static void Err(std::string msg, bool fatal);
     static void Quit();
     static void ForceQuit();
     

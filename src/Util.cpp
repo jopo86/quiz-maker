@@ -32,6 +32,13 @@ bool Util::IsDigit(const char c) {
     return c >= '0' && c <= '9';
 }
 
+bool Util::IsNumber(std::string str) {
+    for (int i = 0; i < str.length(); i++) {
+        if (!IsDigit(str[i])) return false;
+    }
+    return true;
+}
+
 bool Util::IsAlpha(const char c) {
     return IsLetter(c) || IsDigit(c);
 }

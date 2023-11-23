@@ -42,7 +42,7 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_ARGS
     { "listq",  { "more" } },
     { "editq",  { "q", "c", "a" } },
     { "delq",   { "" } },
-    { "take",   { "autosect", "clr" } },
+    { "take",   { "" } },
     { "save",   { "" } },
     { "load",   { "" } }
 };
@@ -154,22 +154,13 @@ void CommandHandler::Run(Command command) {
         else Application::ListQuestions(false);
     }
     else if (cmd == "editq") {
-        Application::EditQuestion(command.hasArg("q"), command.hasArg("c"), command.hasArg("a"));
+        Application::EditQuestion(command.hasArg("q"), command.hasArg("c"), command.hasArg("a"), -1);
     }
     else if (cmd == "delq") {
         Application::DeleteQuestion();
     }
     else if (cmd == "take") {
-        if (command.hasArg("autosect") && command.hasArg("clr")) {
-            Application::Clr();
-            Application::TakeQuiz(true);
-        }
-        else if (command.hasArg("autosect")) Application::TakeQuiz(true);
-        else if (command.hasArg("clr")) {
-            Application::Clr();
-            Application::TakeQuiz(false);
-        }
-        else Application::TakeQuiz(false);
+        Application::TakeQuiz();
     }
     else if (cmd == "save") {
         Application::SaveQuiz();
