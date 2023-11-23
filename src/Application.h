@@ -1,6 +1,6 @@
 #pragma once
 
-#define VERSION "0.2.0 (alpha)"
+#define VERSION "0.4.0 (beta)"
 
 #include <iostream>
 #include <string>
@@ -30,6 +30,7 @@ public:
     static void Help();
     static void HelpMore();
     static void Docs();
+    static void Version();
     static void CreateQuiz();
     static void RenameQuiz();
     static void AddQuestion();

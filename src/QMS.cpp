@@ -1,11 +1,14 @@
 #include "QMS.h"
 
+const int QMS::FILE_NOT_FOUND = 1;
+const int QMS::FILE_NOT_QMS = 2;
+
 void QMS::Save(Quiz quiz, std::string _path) {
     std::string path;
     if (!Util::Contains(_path, ".qms")) path = _path + ".qms";
     else path = _path;
 
-    std::string contents = "# This is a file format used to save and load quizzes. \n# Editing this file manually may lead to undefined behavior.\n";
+    std::string contents = "# This is a file format used to save and load quizzes. \n# Editing this file manually may lead to undefined behavior.\n\n";
     contents += quiz.getName() + "\n";
 
     for (int i = 0; i < quiz.getQuestions().size(); i++) {
@@ -29,14 +32,16 @@ void QMS::Save(Quiz quiz, std::string _path) {
 }
 
 std::pair<Quiz, int> QMS::Load(std::string path) {
-    if (!Util::Contains(path, ".qms")) return std::pair<Quiz, int>(Quiz(), -1);
+    if (!Util::Contains(path, ".qms")) return std::pair<Quiz, int>(Quiz(), FILE_NOT_QMS);
 
     Quiz quiz = Quiz();
     std::string contents = Util::ReadFile(path);
+    if (contents == Util::FILE_NOT_FOUND_ERROR) return std::pair<Quiz, int>(Quiz(), FILE_NOT_FOUND);
+
     std::vector<std::string> lines = Util::Split(contents, '\n');
     int firstLine = 0;
     for (int i = 0; i < lines.size(); i++) {
-        if (Util::Contains(lines[i], '#')) {
+        if (Util::Contains(lines[i], '#') || lines[i] == "") {
             firstLine++;
             continue;
         }

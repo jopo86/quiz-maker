@@ -3,23 +3,6 @@
 std::string Application::dir = "";
 Quiz Application::workingQuiz = Quiz();
 
-void Application::Start() {
-    dir = "";
-    Console::Reset();
-    Console::Clear();
-
-    Console::SetColor(Console::CYAN);
-    std::string title = " Quiz Maker v" + std::string(VERSION) + " ";
-    Console::Print(title + "\n");
-    Console::Reset();
-    for (int i = 0; i < title.length(); i++) {
-        Console::Print("~");
-    };
-    Console::Print("\n\nEnter 'help' for a list of commands.\n\n");
-
-    PollCommand();
-}
-
 void Application::PollCommand() {
     const int color = Console::GetColor();
     Console::SetColor(Console::BLUE);
@@ -46,24 +29,46 @@ void Application::SuccessMsg(std::string msg) {
     Console::Reset();
 }
 
+
+
+void Application::Start() {
+    dir = "";
+    Console::Clear();
+    Console::SetColor(Console::CYAN);
+
+    std::string title = "  Quiz Maker v" + std::string(VERSION) + "  ";
+    std::string bar;
+    for (int i = 0; i < title.length(); i++) {
+        bar += "=";
+    };
+    Console::Print(bar + "\n");
+    Console::Print(title + "\n");
+    Console::Print(bar + "\n");
+    Console::Reset();
+    Console::Print("\n\nEnter 'help' for a list of commands.\n\n");
+
+    PollCommand();
+}
+
 void Application::Help() {
     Console::SetColor(Console::GREEN);
     Console::Print("COMMANDS:\n");
-    Console::Print("q / quit   : quit program\n");
-    Console::Print("q! / quit! : force quit program\n");
-    Console::Print("root       : go to root directory\n");
-    Console::Print("help       : display this help message\n");
-    Console::Print("docs       : open documentation in browser\n");
-    Console::Print("create     : create new quiz\n");
-    Console::Print("rename     : rename quiz\n");
-    Console::Print("addq       : add question\n");
-    Console::Print("listq      : list all questions\n");
-    Console::Print("editq      : edit a question\n");
-    Console::Print("delq       : delete a question\n");
-    Console::Print("take       : take quiz\n");
-    Console::Print("clr        : clear screen\n");
-    Console::Print("save       : save quiz to path\n");
-    Console::Print("load       : load quiz from path\n");
+    Console::Print("q / quit    : quit program\n");
+    Console::Print("q! / quit!  : force quit program\n");
+    Console::Print("v / version : show app version\n");
+    Console::Print("root        : go to root directory\n");
+    Console::Print("help        : display this help message\n");
+    Console::Print("docs        : open documentation in browser\n");
+    Console::Print("create      : create new quiz\n");
+    Console::Print("rename      : rename quiz\n");
+    Console::Print("addq        : add question\n");
+    Console::Print("listq       : list all questions\n");
+    Console::Print("editq       : edit a question\n");
+    Console::Print("delq        : delete a question\n");
+    Console::Print("take        : take quiz\n");
+    Console::Print("clr         : clear screen\n");
+    Console::Print("save        : save quiz to path\n");
+    Console::Print("load        : load quiz from path\n");
     Console::Print("\n");
     Console::Reset();
     PollCommand();
@@ -75,24 +80,25 @@ void Application::HelpMore() {
     Console::Print("-------------------------------------------------------------------------------------------------------------------------------\n");
     Console::Print("|     COMMAND     |          EXPLANATION          |     ARGUMENTS    |             ARGS EXPLANATION             |  DIRECTORY  |\n");
     Console::Print("|-----------------------------------------------------------------------------------------------------------------------------|\n");
-    Console::Print("|     q / quit    |         quit program          |       none       |                   N/A                    |     any     |\n");
-    Console::Print("|    q! / quit!   |       force quit program      |       none       |                   N/A                    |     any     |\n");
-    Console::Print("|      root       |      go to root directory     |       none       |                   N/A                    |     any     |\n");
+    Console::Print("|     q / quit    |         quit program          |         -        |                    -                     |     any     |\n");
+    Console::Print("|    q! / quit!   |       force quit program      |         -        |                    -                     |     any     |\n");
+    Console::Print("|   v / version   |        show app version       |         -        |                    -                     |     any     |\n");
+    Console::Print("|      root       |      go to root directory     |         -        |                    -                     |     any     |\n");
     Console::Print("|      help       |      display help message     |       -more      |       more detailed help msg (this)      |     any     |\n");
-    Console::Print("|      docs       | open documentation in browser |       none       |                   N/A                    |     any     |\n");
-    Console::Print("|     create      |        create new quiz        |       none       |                   N/A                    |     Root    |\n");
-    Console::Print("|     rename      |          rename quiz          |       none       |                   N/A                    |     Quiz    |\n");
+    Console::Print("|      docs       | open documentation in browser |         -        |                    -                     |     any     |\n");
+    Console::Print("|     create      |        create new quiz        |         -        |                    -                     |     Root    |\n");
+    Console::Print("|     rename      |          rename quiz          |         -        |                    -                     |     Quiz    |\n");
     Console::Print("|      addq       |          add question         |   -mc, -wr, -tf  |   multiple choice, written, true/false   |     Quiz    |\n");
-    Console::Print("|     listq       |       list all questions      |      -more       |            more detailed list            |     Quiz    |\n");
+    Console::Print("|     listq       |       list all questions      |       -more      |            more detailed list            |     Quiz    |\n");
     Console::Print("|     editq       |        edit a question        |    -q, -c, -a    |   edit question, choices, and/or answer  |     Quiz    |\n");
-    Console::Print("|     delq        |       delete a question       |       none       |                   N/A                    |     Quiz    |\n");
-    Console::Print("|      take       |           take quiz           |       none       |                   N/A                    |     Quiz    |\n");
-    Console::Print("|      clr        |          clear screen         |       none       |                   N/A                    |     Root    |\n");
-    Console::Print("|      save       |       save quiz to path       |       none       |                   N/A                    |     Quiz    |\n");
-    Console::Print("|      load       |      load quiz from path      |       none       |                   N/A                    |     Root    |\n");
+    Console::Print("|     delq        |       delete a question       |         -        |                    -                     |     Quiz    |\n");
+    Console::Print("|      take       |           take quiz           |         -        |                    -                     |     Quiz    |\n");
+    Console::Print("|      clr        |          clear screen         |         -        |                    -                     |     Root    |\n");
+    Console::Print("|      save       |       save quiz to path       |         -        |                    -                     |     Quiz    |\n");
+    Console::Print("|      load       |      load quiz from path      |         -        |                    -                     |     Root    |\n");
     Console::Print("|                 |                               |                  |                                          |             |\n");
     Console::Print("-------------------------------------------------------------------------------------------------------------------------------\n");
-    Console::Print("Use 'docs' to see full documentation.\n");
+    Console::Print("Use 'docs' to see full documentation.\n\n");
     Console::Reset();
     PollCommand();
 }
@@ -103,6 +109,11 @@ void Application::Docs() {
     Console::SetColor(Console::CYAN);
     Console::Print("https://github.com/jopo86/QuizMaker/wiki/Documentation\n\n");
     Console::Reset();
+    PollCommand();
+}
+
+void Application::Version() {
+    Console::Print("Quiz Maker v" + std::string(VERSION) + "\n\n");
     PollCommand();
 }
 
@@ -195,6 +206,14 @@ void Application::AddQuestionTF() {
 }
 
 void Application::ListQuestions(bool more) {
+    Console::Reset();
+
+    if (workingQuiz.getQuestions().size() == 0) {
+        Console::Print("Quiz has no questions.\n\n");
+        PollCommand();
+        return;
+    }
+
     Console::Print("\n");
     for (int i = 0; i < workingQuiz.getQuestions().size(); i++) {
         Console::Reset();
@@ -203,7 +222,7 @@ void Application::ListQuestions(bool more) {
         Console::Print(std::to_string(qNum) + ") " + q.getQuestion() + "\n");
 
         if (more) {
-            Console::SetColor(Console::BLUE);
+            Console::SetColor(Console::CYAN);
             int _type = q.getType();
             std::string type;
             if (_type == Question::WRITTEN) type = "written";
@@ -225,6 +244,13 @@ void Application::ListQuestions(bool more) {
 
 void Application::EditQuestion(bool q, bool c, bool a, int qNum) {
     Console::Reset();
+
+    if (workingQuiz.getQuestions().size() == 0) {
+        Console::Print("Quiz has no questions.\n\n");
+        PollCommand();
+        return;
+    }
+
     if (qNum == -1) {
         Console::Print("Question # to edit (use 'list' to see question #s): ");
         std::string response = Console::Input();
@@ -260,7 +286,11 @@ void Application::EditQuestion(bool q, bool c, bool a, int qNum) {
         Console::Print("Edit answer? (y/n): ");
         if (Console::Input()[0] == 'y') _a = true;
 
-        if (!_q && !_c && !_a) return;
+        if (!_q && !_c && !_a) {
+            Console::Print("\n");
+            PollCommand();
+            return;
+        }
         EditQuestion(_q, _c, _a, qNum);
     }
     else {
@@ -275,7 +305,11 @@ void Application::EditQuestion(bool q, bool c, bool a, int qNum) {
         Question newQuestion(workingQuiz.getQuestions()[qNum - 1].getType());
 
         if (q) {
-            Console::Print("\nOld question: " + oldQuestion.getQuestion() + "\nEnter new question: ");
+            Console::Print("\nOld question: ");
+            Console::SetColor(Console::CYAN);
+            Console::Print(oldQuestion.getQuestion());
+            Console::Reset();
+            Console::Print("\nEnter new question: ");
             newQuestion.setQuestion(Console::Input());
             SuccessMsg("Question updated.\n");
         }
@@ -283,9 +317,11 @@ void Application::EditQuestion(bool q, bool c, bool a, int qNum) {
 
         if (c) {
             Console::Print("\nOld choices: \n");
+            Console::SetColor(Console::CYAN);
             for (int j = 0; j < oldQuestion.getChoices().size(); j++) {
                 Console::Print(std::string(1, Util::NumToLetter(j)) + ") " + oldQuestion.getChoices()[j] + "\n");
             }
+            Console::Reset();
             Console::Print("Enter new choices (type '-' when done): \n");
             std::string choice;
             while (choice != "-") {
@@ -301,7 +337,11 @@ void Application::EditQuestion(bool q, bool c, bool a, int qNum) {
         }
 
         if (a) {
-            Console::Print("\nOld answer: " + oldQuestion.getAnswer() + "\nEnter new answer: ");
+            Console::Print("\nOld answer: ");
+            Console::SetColor(Console::CYAN);
+            Console::Print(oldQuestion.getAnswer());
+            Console::Reset();
+            Console::Print("\nEnter new answer: ");
             newQuestion.setAnswer(Console::Input());
             SuccessMsg("Answer updated.\n");
         }
@@ -322,6 +362,14 @@ void Application::EditQuestion(bool q, bool c, bool a, int qNum) {
 }
 
 void Application::DeleteQuestion() {
+    Console::Reset();
+
+    if (workingQuiz.getQuestions().size() == 0) {
+        Console::Print("Quiz has no questions.\n\n");
+        PollCommand();
+        return;
+    }
+
     Console::Print("Question # to delete (use 'list' to see question #s): ");
     std::string response = Console::Input();
     if (response == "" || !Util::IsNumber(response)) {
@@ -347,6 +395,14 @@ void Application::DeleteQuestion() {
 }
 
 void Application::TakeQuiz() {
+    Console::Reset();
+
+    if (workingQuiz.getQuestions().size() == 0) {
+        Console::Print("Quiz has no questions.\n\n");
+        PollCommand();
+        return;
+    }
+
     std::string header = " TAKING QUIZ: '" + workingQuiz.getName() + "' ";
     Console::SetColor(Console::BLUE);
     Console::Print("\n" + header + "\n");
@@ -362,7 +418,8 @@ void Application::TakeQuiz() {
 
     for (int i = 0; i < workingQuiz.getQuestions().size(); i++) {
         Question q = workingQuiz.getQuestions()[i];
-        Console::Print("- QUESTION " + std::to_string(qNum) + " -\n");
+        Console::SetColor(Console::MAGENTA);
+        Console::Print("QUESTION " + std::to_string(qNum) + ":\n");
         Console::SetColor(Console::CYAN);
         Console::Print(q.getQuestion() + "\n\n");
         Console::Reset();
@@ -443,14 +500,14 @@ void Application::SaveQuiz() {
 void Application::LoadQuiz() {
     Console::Print("Enter path to load quiz from (relative to location of QuizMaker.exe, or absolute):\n");
     std::string path = Console::Input();
-    if (Util::ReadFile(path) == Util::FILE_NOT_FOUND_ERROR) {
-        Err("path '" + path + "' not found. (aborted)", false);
+    std::pair<Quiz, int> loadpair = QMS::Load(path);
+    if (loadpair.second == QMS::FILE_NOT_QMS) {
+        Err("not a .qms file\n\n", false);
         PollCommand();
         return;
     }
-    std::pair<Quiz, int> loadpair = QMS::Load(path);
-    if (loadpair.second == -1) {
-        Err("not a .qms file\n\n", false);
+    else if (loadpair.second == QMS::FILE_NOT_FOUND) {
+        Err("path '" + path + "' not found. (aborted)", false);
         PollCommand();
         return;
     }
@@ -461,7 +518,7 @@ void Application::LoadQuiz() {
 }
 
 void Application::Root() {
-    Console::Print("Are you sure you want to go back to root directory? Progress may be lost. (y/n)\n");
+    Console::Print("Are you sure you want to go back to root directory? Progress may be lost. (y/n): ");
     std::string response = Console::Input();
     if (response == "y") {
         workingQuiz = Quiz();
@@ -487,9 +544,9 @@ void Application::Clr() {
 void Application::Err(std::string msg, bool fatal) {
     Console::SetColor(Console::RED);
     if (fatal) {
-        Console::Print("FATAL ERROR: " + msg + "\n" + "[Enter] to quit.\n");
+        Console::Print("FATAL ERROR: " + msg + "\n\n[Enter] to quit");
         Console::Input();
-        // doesn't poll command here, so program ends
+        exit(0);
     }
     else {
         Console::Print("ERROR: " + msg + "\n\n");
@@ -499,7 +556,7 @@ void Application::Err(std::string msg, bool fatal) {
 
 void Application::Quit() {
     Console::Reset();
-    Console::Print("Are you sure you want to quit? Progress may be lost. (y/n)\n");
+    Console::Print("Are you sure you want to quit? Progress may be lost. (y/n): ");
     std::string response = Console::Input();
     if (response == "y") {
         ForceQuit();

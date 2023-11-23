@@ -12,6 +12,8 @@ const std::vector<std::string> CommandHandler::VALID_COMMANDS = {
     "q!",
     "quit",
     "q",
+    "v",
+    "version",
     "root",
     "clr",
     "help",
@@ -28,43 +30,47 @@ const std::vector<std::string> CommandHandler::VALID_COMMANDS = {
 };
 
 const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_ARGS = {
-    { "quit!",  { "" } },
-    { "q!",     { "" } },
-    { "quit",   { "" } },
-    { "q",      { "" } },
-    { "root",   { "" } },
-    { "clr",    { "" }},
-    { "help",   { "more" } },
-    { "docs",   { "" } },
-    { "create", { "" } },
-    { "rename", { "" } },
-    { "addq",   { "mc", "wr", "tf" } },
-    { "listq",  { "more" } },
-    { "editq",  { "q", "c", "a" } },
-    { "delq",   { "" } },
-    { "take",   { "" } },
-    { "save",   { "" } },
-    { "load",   { "" } }
+    { "quit!",   { "" } },
+    { "q!",      { "" } },
+    { "quit",    { "" } },
+    { "q",       { "" } },
+    { "v",       { "" } },
+    { "version", { "" } },
+    { "root",    { "" } },
+    { "clr",     { "" }},
+    { "help",    { "more" } },
+    { "docs",    { "" } },
+    { "create",  { "" } },
+    { "rename",  { "" } },
+    { "addq",    { "mc", "wr", "tf" } },
+    { "listq",   { "more" } },
+    { "editq",   { "q", "c", "a" } },
+    { "delq",    { "" } },
+    { "take",    { "" } },
+    { "save",    { "" } },
+    { "load",    { "" } }
 };
 
 const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_DIRS = {
-    { "quit!",  DIR_ANY },
-    { "q!",     DIR_ANY },
-    { "quit",   DIR_ANY },
-    { "q",      DIR_ANY },
-    { "root",   DIR_ANY },
-    { "clr",    DIR_ANY },
-    { "help",   DIR_ANY },
-    { "docs",   DIR_ANY},
-    { "create", DIR_ROOT },
-    { "rename", DIR_QUIZ },
-    { "addq",   DIR_QUIZ },
-    { "listq",  DIR_QUIZ },
-    { "editq",  DIR_QUIZ },
-    { "delq",   DIR_QUIZ },
-    { "take",   DIR_QUIZ },
-    { "save",   DIR_QUIZ },
-    { "load",   DIR_ROOT }
+    { "quit!",   DIR_ANY },
+    { "q!",      DIR_ANY },
+    { "quit",    DIR_ANY },
+    { "q",       DIR_ANY },
+    { "v",       DIR_ANY },
+    { "version", DIR_ANY },
+    { "root",    DIR_ANY },
+    { "clr",     DIR_ANY },
+    { "help",    DIR_ANY },
+    { "docs",    DIR_ANY},
+    { "create",  DIR_ROOT },
+    { "rename",  DIR_QUIZ },
+    { "addq",    DIR_QUIZ },
+    { "listq",   DIR_QUIZ },
+    { "editq",   DIR_QUIZ },
+    { "delq",    DIR_QUIZ },
+    { "take",    DIR_QUIZ },
+    { "save",    DIR_QUIZ },
+    { "load",    DIR_ROOT }
 };
 
 std::string CommandHandler::err = "";
@@ -123,6 +129,9 @@ void CommandHandler::Run(Command command) {
     } 
     else if (cmd == "quit" || cmd == "q") {
         Application::Quit();
+    }
+    else if (cmd == "v" || cmd == "version") {
+        Application::Version();
     }
     else if (cmd == "root") {
         Application::Root();
