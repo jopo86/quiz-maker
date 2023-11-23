@@ -252,7 +252,7 @@ void Application::EditQuestion(bool q, bool c, bool a, int qNum) {
     }
 
     if (qNum == -1) {
-        Console::Print("Question # to edit (use 'list' to see question #s): ");
+        Console::Print("Question # to edit (use 'listq' to see question #s): ");
         std::string response = Console::Input();
         if (response == "" || !Util::IsNumber(response)) {
             Err("'" + response + "' is not a number. (aborted)", false);
@@ -313,7 +313,7 @@ void Application::EditQuestion(bool q, bool c, bool a, int qNum) {
             newQuestion.setQuestion(Console::Input());
             SuccessMsg("Question updated.\n");
         }
-        else newQuestion.setQuestion(oldQuestion.getAnswer());
+        else newQuestion.setQuestion(oldQuestion.getQuestion());
 
         if (c) {
             Console::Print("\nOld choices: \n");
@@ -370,7 +370,7 @@ void Application::DeleteQuestion() {
         return;
     }
 
-    Console::Print("Question # to delete (use 'list' to see question #s): ");
+    Console::Print("Question # to delete (use 'listq' to see question #s): ");
     std::string response = Console::Input();
     if (response == "" || !Util::IsNumber(response)) {
         Err("'" + response + "' is not a number. (aborted)", false);
@@ -485,7 +485,7 @@ void Application::TakeQuiz() {
         qNum++;
     }
 
-    SuccessMsg("Quiz Finsihed. Score: " + std::to_string(score) + "/" + std::to_string(maxScore) + " (" + std::to_string((int)((float)score / maxScore * 100)) + "%)" + "\n\n");
+    SuccessMsg("Quiz Finished. Score: " + std::to_string(score) + "/" + std::to_string(maxScore) + " (" + std::to_string((int)((float)score / maxScore * 100)) + "%)" + "\n\n");
     PollCommand();
 }
 

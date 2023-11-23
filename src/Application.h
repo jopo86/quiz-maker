@@ -1,6 +1,6 @@
 #pragma once
 
-#define VERSION "0.4.0 (beta)"
+#define VERSION "0.4.1 (beta)"
 
 #include <iostream>
 #include <string>
