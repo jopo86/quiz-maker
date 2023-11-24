@@ -23,9 +23,11 @@ const std::vector<std::string> CommandHandler::VALID_COMMANDS = {
     "sca",
     "rename",
     "addq",
+    "insq",
     "listq",
     "editq",
     "delq",
+    "swapq",
     "take",
     "save",
     "load"
@@ -47,9 +49,11 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_ARGS
     { "sca",     { "" } },
     { "rename",  { "" } },
     { "addq",    { "mc", "wr", "tf" } },
+    { "insq",    { "mc", "wr", "tf" } },
     { "listq",   { "more" } },
     { "editq",   { "q", "c", "a" } },
     { "delq",    { "" } },
+    { "swapq",   { "" } },
     { "take",    { "" } },
     { "save",    { "" } },
     { "load",    { "" } }
@@ -71,9 +75,11 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_DIRS
     { "sca",     DIR_QUIZ },
     { "rename",  DIR_QUIZ },
     { "addq",    DIR_QUIZ },
+    { "insq",    DIR_QUIZ },
     { "listq",   DIR_QUIZ },
     { "editq",   DIR_QUIZ },
     { "delq",    DIR_QUIZ },
+    { "swapq",   DIR_QUIZ },
     { "take",    DIR_QUIZ },
     { "save",    DIR_QUIZ },
     { "load",    DIR_ROOT }
@@ -165,10 +171,16 @@ void CommandHandler::Run(Command command) {
         Application::RenameQuiz();
     }
     else if (cmd == "addq") {
-        if (command.hasArg("mc")) Application::AddQuestionMC();
-        else if (command.hasArg("wr")) Application::AddQuestionWR();
-        else if (command.hasArg("tf")) Application::AddQuestionTF();
+        if (command.hasArg("wr")) Application::AddQuestion(Question::WRITTEN);
+        else if (command.hasArg("mc")) Application::AddQuestion(Question::MULTIPLE_CHOICE);
+        else if (command.hasArg("tf")) Application::AddQuestion(Question::TRUE_FALSE);
         else Application::AddQuestion();	
+    }
+    else if (cmd == "insq") {
+        if (command.hasArg("wr")) Application::InsertQuestion(Question::WRITTEN);
+        else if (command.hasArg("mc")) Application::InsertQuestion(Question::MULTIPLE_CHOICE);
+        else if (command.hasArg("tf")) Application::InsertQuestion(Question::TRUE_FALSE);
+        else Application::InsertQuestion();	
     }
     else if (cmd == "listq") {
         if (command.hasArg("more")) Application::ListQuestions(true);
@@ -179,6 +191,9 @@ void CommandHandler::Run(Command command) {
     }
     else if (cmd == "delq") {
         Application::DeleteQuestion();
+    }
+    else if (cmd == "swapq") {
+        Application::SwapQuestions();
     }
     else if (cmd == "take") {
         Application::TakeQuiz();

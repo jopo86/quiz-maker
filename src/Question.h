@@ -19,6 +19,7 @@ public:
 	static const int WRITTEN = 0;
 	static const int MULTIPLE_CHOICE = 1;
 	static const int TRUE_FALSE = 2;
+	static const int SEQUENCE = 3;
 
 	Question() : type(-1) {}
 	Question(const int type);
