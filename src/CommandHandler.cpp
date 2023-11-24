@@ -18,7 +18,9 @@ const std::vector<std::string> CommandHandler::VALID_COMMANDS = {
     "clr",
     "help",
     "docs",
+    "tut",
     "create",
+    "sca",
     "rename",
     "addq",
     "listq",
@@ -40,7 +42,9 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_ARGS
     { "clr",     { "" }},
     { "help",    { "more" } },
     { "docs",    { "" } },
+    { "tut",     { "" } },
     { "create",  { "" } },
+    { "sca",     { "" } },
     { "rename",  { "" } },
     { "addq",    { "mc", "wr", "tf" } },
     { "listq",   { "more" } },
@@ -62,7 +66,9 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_DIRS
     { "clr",     DIR_ANY },
     { "help",    DIR_ANY },
     { "docs",    DIR_ANY},
+    { "tut",     DIR_ANY},
     { "create",  DIR_ROOT },
+    { "sca",     DIR_QUIZ },
     { "rename",  DIR_QUIZ },
     { "addq",    DIR_QUIZ },
     { "listq",   DIR_QUIZ },
@@ -146,8 +152,14 @@ void CommandHandler::Run(Command command) {
     else if (cmd == "docs") {
         Application::Docs();
     }
+    else if (cmd == "tut") {
+        Application::Tut();
+    }
     else if (cmd == "create") {
         Application::CreateQuiz();
+    }
+    else if (cmd == "sca") {
+        Application::SetSCA();
     }
     else if (cmd == "rename") {
         Application::RenameQuiz();

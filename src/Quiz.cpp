@@ -3,16 +3,19 @@
 Quiz::Quiz() {
 	name = "";
 	questions = {};
+	showCorrectAnswer = true;
 }
 
 Quiz::Quiz(std::string name) {
 	this->name = name;
 	questions = {};
+	showCorrectAnswer = true;
 }
 
 Quiz::Quiz(std::string name, std::vector<Question> questions) {
 	this->name = name;
 	this->questions = questions;
+	showCorrectAnswer = true;
 }
 
 void Quiz::setQuestions(std::vector<Question> questions) {
@@ -29,6 +32,10 @@ void Quiz::addQuestions(std::vector<Question> questions) {
 	}
 }
 
+void Quiz::setShowCorrectAnswer(bool showCorrectAnswer) {
+	this->showCorrectAnswer = showCorrectAnswer;
+}
+
 void Quiz::setName(std::string name) {
 	this->name = name;
 }
@@ -39,4 +46,8 @@ std::vector<Question> Quiz::getQuestions() {
 
 std::string Quiz::getName() {
 	return name;
+}
+
+bool Quiz::showsCorrectAnswer() {
+	return showCorrectAnswer;
 }

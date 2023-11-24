@@ -29,8 +29,6 @@ void Application::SuccessMsg(std::string msg) {
     Console::Reset();
 }
 
-
-
 void Application::Start() {
     dir = "";
     Console::Clear();
@@ -43,7 +41,7 @@ void Application::Start() {
     };
     Console::Print(bar + "\n");
     Console::Print(title + "\n");
-    Console::Print(bar + "\n");
+    Console::Print(bar);
     Console::Reset();
     Console::Print("\n\nEnter 'help' for a list of commands.\n\n");
 
@@ -59,7 +57,9 @@ void Application::Help() {
     Console::Print("root        : go to root directory\n");
     Console::Print("help        : display this help message\n");
     Console::Print("docs        : open documentation in browser\n");
+    Console::Print("tut         : open tutorial in browser\n");
     Console::Print("create      : create new quiz\n");
+    Console::Print("sca         : show correct answer setting\n");
     Console::Print("rename      : rename quiz\n");
     Console::Print("addq        : add question\n");
     Console::Print("listq       : list all questions\n");
@@ -86,7 +86,9 @@ void Application::HelpMore() {
     Console::Print("|      root       |      go to root directory     |         -        |                    -                     |     any     |\n");
     Console::Print("|      help       |      display help message     |       -more      |       more detailed help msg (this)      |     any     |\n");
     Console::Print("|      docs       | open documentation in browser |         -        |                    -                     |     any     |\n");
+    Console::Print("|      tut        |   open tutorial in browser    |         -        |                    -                     |     any     |\n");
     Console::Print("|     create      |        create new quiz        |         -        |                    -                     |     Root    |\n");
+    Console::Print("|       sca       |  show correct answer setting  |         -        |                    -                     |     Quiz    |\n");
     Console::Print("|     rename      |          rename quiz          |         -        |                    -                     |     Quiz    |\n");
     Console::Print("|      addq       |          add question         |   -mc, -wr, -tf  |   multiple choice, written, true/false   |     Quiz    |\n");
     Console::Print("|     listq       |       list all questions      |       -more      |            more detailed list            |     Quiz    |\n");
@@ -112,6 +114,15 @@ void Application::Docs() {
     PollCommand();
 }
 
+void Application::Tut() {
+    Util::OpenLink("https://github.com/jopo86/QuizMaker/wiki/Tutorial");
+    SuccessMsg("Attempted to open link in browser. If it doesn't open, use this link:\n");
+    Console::SetColor(Console::CYAN);
+    Console::Print("https://github.com/jopo86/QuizMaker/wiki/Tutorial\n\n");
+    Console::Reset();
+    PollCommand();
+}
+
 void Application::Version() {
     Console::Print("Quiz Maker v" + std::string(VERSION) + "\n\n");
     PollCommand();
@@ -123,6 +134,19 @@ void Application::CreateQuiz() {
     Console::Print("Enter quiz name: ");
     workingQuiz = Quiz(Console::Input());
     SuccessMsg("Created empty quiz '" + workingQuiz.getName() + "'.\n\n");
+    PollCommand();
+}
+
+void Application::SetSCA() {
+    Console::Print("Show correct answer when incorrect? (y/n): ");
+    char response = Util::ToLower(Console::Input()[0]);
+    if (response == 'y') workingQuiz.setShowCorrectAnswer(true);
+    else if (response == 'n') workingQuiz.setShowCorrectAnswer(false);
+    else {
+        Err("unhandled response: '" + std::string(1, response) + "'", false);
+        
+    }
+    Console::Print("\n");
     PollCommand();
 }
 
@@ -170,19 +194,27 @@ void Application::AddQuestionMC() {
     mcq.setQuestion(Console::Input());
     Console::Print("Enter choices (enter '-' when finished):\n");
     std::string choice;
+    int i = 0;
     while (choice != "-") {
+        Console::Print(std::string(1, Util::NumToLetter(i)) + ") ");
         choice = Console::Input();
         if (choice != "-") {
             mcq.addChoice(choice);
         }
+        i++;
     }
-    Console::Print("Enter correct choice:\n");
-    std::string ans = Console::Input();
-    if (!mcq.isChoice(ans)) {
-        Err("answer '" + ans + "' not found in choices. (aborted)", false);
-        dir = "Quiz";
+    Console::Print("Enter correct (letter) choice: ");
+    char response = Util::ToLower(Console::Input()[0]);
+    if (!Util::IsLetter(response)) {
+        Err("'" + std::string(1, response) + "' is not a letter. (aborted)", false);
+        PollCommand();
         return;
     }
+    i = Util::LetterToNum(response);
+    if (i >= mcq.getChoices().size()) {
+        Err("choice '" + std::string(1, response) + "' does not exist. (aborted)", false);
+    }
+    std::string ans = mcq.getChoices()[i];
     mcq.setAnswer(ans);
     workingQuiz.addQuestion(mcq);
     SuccessMsg("Question created.\n\n");
@@ -434,7 +466,8 @@ void Application::TakeQuiz() {
             }
             else {
                 Console::SetColor(Console::RED);
-                Console::Print("Incorrect!\n\n");
+                Console::Print("Incorrect!\n");
+                if (workingQuiz.showsCorrectAnswer()) Console::Print("Correct Answer: " + q.getAnswer() + "\n\n");
                 Console::Reset();
             }
         }
@@ -462,7 +495,8 @@ void Application::TakeQuiz() {
             }
             else {
                 Console::SetColor(Console::RED);
-                Console::Print("Incorrect!\n\n");
+                Console::Print("Incorrect!\n");
+                if (workingQuiz.showsCorrectAnswer()) Console::Print("Correct Answer: " + q.getAnswer() + "\n\n");
                 Console::Reset();
             }
         }
@@ -478,7 +512,8 @@ void Application::TakeQuiz() {
             }
             else {
                 Console::SetColor(Console::RED);
-                Console::Print("Incorrect!\n\n");
+                Console::Print("Incorrect!\n");
+                if (workingQuiz.showsCorrectAnswer()) Console::Print("Correct Answer: " + q.getAnswer() + "\n\n");
                 Console::Reset();
             }
         }
@@ -492,7 +527,7 @@ void Application::TakeQuiz() {
 void Application::SaveQuiz() {
     Console::Print("Enter path to save quiz to (relative to location of QuizMaker.exe, or absolute):\n");
     std::string path = Console::Input();
-    QMS::Save(workingQuiz, path);
+    path = QMS::Save(workingQuiz, path);
     SuccessMsg("Quiz saved to '" + path + "'.\n\n");
     PollCommand();
 }
@@ -502,7 +537,7 @@ void Application::LoadQuiz() {
     std::string path = Console::Input();
     std::pair<Quiz, int> loadpair = QMS::Load(path);
     if (loadpair.second == QMS::FILE_NOT_QMS) {
-        Err("not a .qms file\n\n", false);
+        Err("not a .qms file", false);
         PollCommand();
         return;
     }

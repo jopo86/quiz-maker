@@ -3,13 +3,14 @@
 const int QMS::FILE_NOT_FOUND = 1;
 const int QMS::FILE_NOT_QMS = 2;
 
-void QMS::Save(Quiz quiz, std::string _path) {
+std::string QMS::Save(Quiz quiz, std::string _path) {
     std::string path;
     if (!Util::Contains(_path, ".qms")) path = _path + ".qms";
     else path = _path;
 
     std::string contents = "# This is a file format used to save and load quizzes. \n# Editing this file manually may lead to undefined behavior.\n\n";
     contents += quiz.getName() + "\n";
+    contents += quiz.showsCorrectAnswer() ? "scat\n" : "scaf\n";
 
     for (int i = 0; i < quiz.getQuestions().size(); i++) {
         contents += "^\n";
@@ -29,6 +30,7 @@ void QMS::Save(Quiz quiz, std::string _path) {
     }
 
     Util::WriteFile(contents, path);
+    return path;
 }
 
 std::pair<Quiz, int> QMS::Load(std::string path) {
@@ -46,7 +48,10 @@ std::pair<Quiz, int> QMS::Load(std::string path) {
             continue;
         }
 
-        if (i == firstLine) quiz.setName(lines[i]);
+        if (i == firstLine) {
+            quiz.setName(lines[i]);
+            quiz.setShowCorrectAnswer(lines[i] == "scat");
+        }
         else if (lines[i] == "^") {
             int j = i + 1;
             std::string type = lines[j];
