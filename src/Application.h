@@ -1,6 +1,6 @@
 #pragma once
 
-#define VERSION "0.5.0 (beta)"
+#define VERSION "0.5.0 (release candidate)"
 
 #include <iostream>
 #include <string>
@@ -16,11 +16,14 @@ private:
 
     static std::string dir;
     static Quiz workingQuiz;
+    static std::string lastCommand;
 
     static void PollCommand();
     static void RunCommand(Command command);
 
     static void SuccessMsg(std::string msg);
+
+    static std::string VerifyQuestionNumInput(std::string inp);
 
 public:
 

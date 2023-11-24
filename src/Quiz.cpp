@@ -32,6 +32,10 @@ void Quiz::addQuestions(std::vector<Question> questions) {
 	}
 }
 
+void Quiz::setQuestion(Question question, int i) {
+	questions[i] = question;
+}
+
 void Quiz::setShowCorrectAnswer(bool showCorrectAnswer) {
 	this->showCorrectAnswer = showCorrectAnswer;
 }

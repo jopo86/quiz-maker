@@ -14,15 +14,12 @@ private:
 public:
     Command();
     Command(std::string cmd);
-    Command(std::string cmd, std::vector<std::string> args);
+    Command(std::string cmd, std::vector<std::string> args);\
 
     bool hasArg(std::string arg);
-    
 
     static Command Parse(std::string str);
 
     std::string getCmd();
     std::vector<std::string> getArgs();
-
-    
 };

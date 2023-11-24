@@ -19,6 +19,7 @@ public:
 	void setQuestions(std::vector<Question> questions);
 	void addQuestion(Question question);
 	void addQuestions(std::vector<Question> questions);
+	void setQuestion(Question question, int i);
 	void setName(std::string name);
 	void setShowCorrectAnswer(bool showCorrectAnswer);
 

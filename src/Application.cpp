@@ -2,6 +2,7 @@
 
 std::string Application::dir = "";
 Quiz Application::workingQuiz = Quiz();
+std::string Application::lastCommand = "";
 
 void Application::PollCommand() {
     const int color = Console::GetColor();
@@ -20,6 +21,7 @@ void Application::RunCommand(Command command) {
         return;
     }
 
+    if (!Util::EqualsIgnoreCase(command.getCmd(), "q")) lastCommand = command.getCmd();
     CommandHandler::Run(command);
 }
 
@@ -29,12 +31,25 @@ void Application::SuccessMsg(std::string msg) {
     Console::Reset();
 }
 
+std::string Application::VerifyQuestionNumInput(std::string inp) {
+    if (!Util::IsNumber(inp)) {
+        return "response must be a number.";
+    }
+    int num = std::stoi(inp);
+    size_t size = workingQuiz.getQuestions().size();
+    if (num > size) {
+        return "too large, quiz only has " + std::to_string(size) + " questions.";
+    }
+
+    return "";
+}
+
 void Application::Start() {
     dir = "";
     Console::Clear();
     Console::SetColor(Console::CYAN);
 
-    std::string title = "  Quiz Maker v" + std::string(VERSION) + "  ";
+    std::string title = "       Quiz Maker v" + std::string(VERSION) + "       ";
     std::string bar;
     for (int i = 0; i < title.length(); i++) {
         bar += "=";
@@ -43,7 +58,7 @@ void Application::Start() {
     Console::Print(title + "\n");
     Console::Print(bar);
     Console::Reset();
-    Console::Print("\n\nEnter 'help' for a list of commands.\n\n");
+    Console::Print("\n\nEnter 'help' for a list of commands.\nEnter 'docs' for full documentation.\nEnter 'tut' for the tutorial.\n\n");
 
     PollCommand();
 }
@@ -71,7 +86,7 @@ void Application::Help() {
     Console::Print("clr         : clear screen\n");
     Console::Print("save        : save quiz to path\n");
     Console::Print("load        : load quiz from path\n");
-    Console::Print("\n");
+    Console::Print("\nUse 'help -more' for more detail\n\n");
     Console::Reset();
     PollCommand();
 }
@@ -104,7 +119,7 @@ void Application::HelpMore() {
     Console::Print("|      load       |      load quiz from path      |         -        |                    -                     |     Root    |\n");
     Console::Print("|                 |                               |                  |                                          |             |\n");
     Console::Print("-------------------------------------------------------------------------------------------------------------------------------\n");
-    Console::Print("Use 'docs' to see full documentation.\n\n");
+    Console::Print("Use 'docs' to see full documentation, or 'tut' to see the tutorial.\n\n");
     Console::Reset();
     PollCommand();
 }
@@ -275,18 +290,14 @@ void Application::InsertQuestion(const int type) {
 
     Console::Print("Question # to insert to (use 'listq' to see question #s): ");
     std::string response = Console::Input();
-    if (response == "" || !Util::IsNumber(response)) {
-        Err("'" + response + "' is not a number. (aborted)", false);
+    std::string verif = VerifyQuestionNumInput(response);
+    if (verif != "") {
+        Err(verif + " (aborted)", false);
+        PollCommand();
         return;
     }
+    
     int qNum = std::stoi(response);
-
-    size_t size = workingQuiz.getQuestions().size();
-    if (qNum > size) {
-        Err("too large, quiz only has " + std::to_string(size) + " questions. (aborted)", false);
-        return;
-    }
-
     std::vector<Question> questions;
     for (int i = 0; i < qNum - 1; i++) {
         questions.push_back(workingQuiz.getQuestions()[i]);
@@ -349,7 +360,7 @@ void Application::InsertQuestion(const int type) {
     }
 
     questions.push_back(q);
-    for (int i = qNum - 1; i < size; i++) {
+    for (int i = qNum - 1; i < workingQuiz.getQuestions().size(); i++) {
         questions.push_back(workingQuiz.getQuestions()[i]);
     }
 
@@ -376,20 +387,27 @@ void Application::ListQuestions(bool more) {
         Console::Print(std::to_string(qNum) + ") " + q.getQuestion() + "\n");
 
         if (more) {
-            Console::SetColor(Console::CYAN);
             int _type = q.getType();
             std::string type;
             if (_type == Question::WRITTEN) type = "written";
             else if (_type == Question::MULTIPLE_CHOICE) type = "multiple choice";
             else if (_type == Question::TRUE_FALSE) type = "true/false";
-            Console::Print("Type: " + type + "\n");
+            Console::Print("Type: ");
+            Console::SetColor(Console::CYAN);
+            Console::Print(type + "\n");
+            Console::Reset();
             if (_type == Question::MULTIPLE_CHOICE) {
                 Console::Print("Choices: \n");
+                Console::SetColor(Console::CYAN);
                 for (int j = 0; j < q.getChoices().size(); j++) {
                     Console::Print(std::string(1, Util::NumToLetter(j)) + ") " + q.getChoices()[j] + "\n");
                 }
+                Console::Reset();
             }
-            Console::Print("Answer: " + q.getAnswer() + "\n\n");
+            Console::Print("Answer: ");
+            Console::SetColor(Console::CYAN);
+            Console::Print(q.getAnswer() + "\n\n");
+            Console::Reset();
         }
     }
     if (!more) Console::Print("\n");
@@ -526,21 +544,18 @@ void Application::DeleteQuestion() {
 
     Console::Print("Question # to delete (use 'listq' to see question #s): ");
     std::string response = Console::Input();
-    if (response == "" || !Util::IsNumber(response)) {
-        Err("'" + response + "' is not a number. (aborted)", false);
+    std::string verif = VerifyQuestionNumInput(response);
+    if (verif != "") {
+        Err(verif + " (aborted)", false);
+        PollCommand();
         return;
     }
     int qNum = std::stoi(response);
-
-    size_t size = workingQuiz.getQuestions().size();
-    if (qNum > size) {
-        Err("too large, quiz only has " + std::to_string(size) + " questions. (aborted)", false);
-        return;
-    }
+    
 
     std::vector<Question> oldQuestions = workingQuiz.getQuestions();
     std::vector<Question> newQuestions;
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < workingQuiz.getQuestions().size(); i++) {
         if (i != qNum - 1) newQuestions.push_back(oldQuestions[i]);
     }
     workingQuiz.setQuestions(newQuestions);
@@ -551,17 +566,46 @@ void Application::DeleteQuestion() {
 void Application::SwapQuestions() {
     Console::Print("Swap question #");
     std::string response = Console::Input();
-    if (!Util::IsNumber(response)) {
-        Err("response must be a number. (aborted)", false);
+    std::string verif = VerifyQuestionNumInput(response);
+    if (verif != "") {
+        Err(verif + " (aborted)", false);
         PollCommand();
         return;
     }
     int num1 = std::stoi(response);
-    // TODO
+
+    Console::Print("with question #");
+    response = Console::Input();
+    verif = VerifyQuestionNumInput(response);
+    if (verif != "") {
+        Err(verif + " (aborted)", false);
+        PollCommand();
+        return;
+    }
+    int num2 = std::stoi(response);
+
+    if (num1 == num2) {
+        Err("cannot swap the same question. (aborted)", false);
+        PollCommand();
+        return;
+    }
+    else if (num1 < 1 || num2 < 1) {
+        Err("question # must be 1 or greater. (aborted)", false);
+        PollCommand();
+        return;
+    }
+
+    Question temp = workingQuiz.getQuestions()[num1 - 1];
+    workingQuiz.setQuestion(workingQuiz.getQuestions()[num2 - 1], num1 - 1);
+    workingQuiz.setQuestion(temp, num2 - 1);
+
+    SuccessMsg("Swapped questions #" + std::to_string(num1) + " and #" + std::to_string(num2) + ".\n\n");
+    PollCommand();
 }
 
 void Application::TakeQuiz() {
     Console::Reset();
+    Console::Clear();
 
     if (workingQuiz.getQuestions().size() == 0) {
         Console::Print("Quiz has no questions.\n\n");
@@ -569,12 +613,12 @@ void Application::TakeQuiz() {
         return;
     }
 
-    std::string header = " TAKING QUIZ: '" + workingQuiz.getName() + "' ";
-    Console::SetColor(Console::BLUE);
+    std::string header = "          " +  Util::ToUpper(workingQuiz.getName()) + "          ";
+    Console::SetColor(Console::MAGENTA);
     Console::Print("\n" + header + "\n");
     Console::Reset();
     for (int i = 0; i < header.length(); i++) {
-        Console::Print("-");
+        Console::Print("~");
     }
     Console::Print("\n\n");
 
@@ -584,7 +628,6 @@ void Application::TakeQuiz() {
 
     for (int i = 0; i < workingQuiz.getQuestions().size(); i++) {
         Question q = workingQuiz.getQuestions()[i];
-        Console::SetColor(Console::MAGENTA);
         Console::Print("QUESTION " + std::to_string(qNum) + ":\n");
         Console::SetColor(Console::CYAN);
         Console::Print(q.getQuestion() + "\n\n");
@@ -602,6 +645,7 @@ void Application::TakeQuiz() {
                 Console::SetColor(Console::RED);
                 Console::Print("Incorrect!\n");
                 if (workingQuiz.showsCorrectAnswer()) Console::Print("Correct Answer: " + q.getAnswer() + "\n\n");
+                else Console::Print("\n");
                 Console::Reset();
             }
         }
@@ -631,6 +675,7 @@ void Application::TakeQuiz() {
                 Console::SetColor(Console::RED);
                 Console::Print("Incorrect!\n");
                 if (workingQuiz.showsCorrectAnswer()) Console::Print("Correct Answer: " + q.getAnswer() + "\n\n");
+                else Console::Print("\n");
                 Console::Reset();
             }
         }
@@ -648,6 +693,7 @@ void Application::TakeQuiz() {
                 Console::SetColor(Console::RED);
                 Console::Print("Incorrect!\n");
                 if (workingQuiz.showsCorrectAnswer()) Console::Print("Correct Answer: " + q.getAnswer() + "\n\n");
+                else Console::Print("\n");
                 Console::Reset();
             }
         }
@@ -671,7 +717,7 @@ void Application::LoadQuiz() {
     std::string path = Console::Input();
     std::pair<Quiz, int> loadpair = QMS::Load(path);
     if (loadpair.second == QMS::FILE_NOT_QMS) {
-        Err("not a .qms file", false);
+        Err("not a .qms file. (aborted)", false);
         PollCommand();
         return;
     }
@@ -723,6 +769,8 @@ void Application::Err(std::string msg, bool fatal) {
 }
 
 void Application::Quit() {
+    if (Util::EqualsIgnoreCase(lastCommand, "save")) ForceQuit();
+
     Console::Reset();
     Console::Print("Are you sure you want to quit? Progress may be lost. (y/n): ");
     std::string response = Console::Input();
@@ -734,7 +782,7 @@ void Application::Quit() {
         PollCommand();
     }
     else {
-        Err("unhandled response '" + response + "'\n\n", false);
+        Err("unrecognized response '" + response + "'\n\n", false);
         PollCommand();
     }
 }
