@@ -49,7 +49,7 @@ std::vector<std::string> Question::getChoices() {
 }
 
 bool Question::check(std::string answer) {
-	return Util::EqualsIgnoreCase(this->answer, answer);
+	return Util::EqualsIgnoreCase(Util::RemoveAllSpaces(this->answer), Util::RemoveAllSpaces(answer));
 }
 
 bool Question::isChoice(std::string choice) {

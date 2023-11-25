@@ -222,6 +222,10 @@ void Application::AddQuestion(const int type) {
                     mcq.addChoice(choice);
                 }
                 i++;
+                if (i >= 26) {
+                    Console::Print("Reached end of alphabet, no more choices allowed.\n");
+                    break;
+                }
             }
             Console::Print("Enter correct (letter) choice: ");
             char response = Util::ToLower(Console::Input()[0]);
@@ -605,21 +609,20 @@ void Application::SwapQuestions() {
 
 void Application::TakeQuiz() {
     Console::Reset();
-    Console::Clear();
 
     if (workingQuiz.getQuestions().size() == 0) {
         Console::Print("Quiz has no questions.\n\n");
         PollCommand();
         return;
     }
+    
+    Console::Clear();
 
-    std::string header = "          " +  Util::ToUpper(workingQuiz.getName()) + "          ";
+    std::string header = Util::ToUpper(workingQuiz.getName());
     Console::SetColor(Console::MAGENTA);
     Console::Print("\n" + header + "\n");
     Console::Reset();
-    for (int i = 0; i < header.length(); i++) {
-        Console::Print("~");
-    }
+    Console::Print("\nEnter '[exit]' at any time to stop taking quiz.\n");
     Console::Print("\n\n");
 
     int qNum = 1;
@@ -635,6 +638,11 @@ void Application::TakeQuiz() {
         if (q.getType() == Question::WRITTEN) {
             Console::Print("Enter answer: ");
             std::string answer = Console::Input();
+            if (Util::RemoveAllSpaces(answer) == "[exit]")  {
+                Console::Print("\n");
+                PollCommand();
+                return;
+            }
             if (q.check(answer)) {
                 Console::SetColor(Console::GREEN);
                 Console::Print("Correct!\n\n");
@@ -657,13 +665,21 @@ void Application::TakeQuiz() {
                 Console::Print(std::string(1, Util::NumToLetter(j)) + ") " + q.getChoices()[j] + "\n");
             }
             Console::Reset();
+
+        enter_choice:
+            Console::Reset();
             Console::Print("Enter (letter) choice: ");
-            char letterChoice = Console::Input()[0];
-            int numChoice = Util::LetterToNum(letterChoice);
-            if (numChoice >= q.getChoices().size() || numChoice == -1) {
-                Err("choice does not exist. (aborted)", false);
+            std::string response = Console::Input();
+            if (Util::RemoveAllSpaces(response) == "[exit]")  {
+                Console::Print("\n");
                 PollCommand();
                 return;
+            }
+            char letterChoice = response[0];
+            int numChoice = Util::LetterToNum(letterChoice);
+            if (numChoice >= q.getChoices().size() || numChoice == -1) {
+                Err("choice does not exist, re-enter.", false);
+                goto enter_choice;
             }
             if (q.check(q.getChoices()[numChoice])) {
                 Console::SetColor(Console::GREEN);
@@ -674,7 +690,7 @@ void Application::TakeQuiz() {
             else {
                 Console::SetColor(Console::RED);
                 Console::Print("Incorrect!\n");
-                if (workingQuiz.showsCorrectAnswer()) Console::Print("Correct Answer: " + q.getAnswer() + "\n\n");
+                if (workingQuiz.showsCorrectAnswer()) Console::Print("Correct Answer: " + std::string(1, Util::NumToLetter(Util::Find(q.getChoices(), q.getAnswer()))) + ") " + q.getAnswer() + "\n\n");
                 else Console::Print("\n");
                 Console::Reset();
             }
@@ -682,7 +698,13 @@ void Application::TakeQuiz() {
 
         else if (q.getType() == Question::TRUE_FALSE) {
             Console::Print("Enter answer (T/F): ");
-            char ans = Util::ToLower(Console::Input()[0]);
+            std::string response = Console::Input();
+            if (Util::RemoveAllSpaces(response) == "[exit]")  {
+                Console::Print("\n");
+                PollCommand();
+                return;
+            }
+            char ans = Util::ToLower(response[0]);
             if (q.check({ ans })) {
                 Console::SetColor(Console::GREEN);
                 Console::Print("Correct!\n\n");

@@ -3,7 +3,7 @@ A C++ terminal application to create, take, & share quizzes.
 
 ## Installation
 To install, simply download the zip file below, extract it, and run QuizMaker.exe under the QuizMaker folder. Once downloaded, you can move the QuizMaker folder anywhere.  
-[Latest Release (0.5.0-rc)](https://mega.nz/file/GhYHjR7b#qUQYR7bBpeTP7HAjPPyvOpOLBSKuEjrD65yJQvND5sM)  
+[Latest Release (1.0.0)](https://mega.nz/file/2950iTQB#dgpP_Q5wt41gI45JLzes7a7XNboEhl5V8D7BijPUUKY)  
 [All Releases](https://mega.nz/folder/Xlxk0JhR#GEoC0FFyyR9OX82k4XjYNg)
 
 Windows may stop the program from running. This is because it does not recognize the application, which is normal. If this happens click 'More Info' and then 'Run anway'.

@@ -64,6 +64,8 @@ public:
     static char NumToLetter(int i);
     static int LetterToNum(char c);
 
+    static std::string RemoveAllSpaces(std::string str);
+
     static bool EqualsIgnoreCase(std::string a, std::string b);
 
     static std::string Substr(std::string str, int start, int end);

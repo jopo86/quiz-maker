@@ -105,6 +105,14 @@ int Util::LetterToNum(char c) {
     return Find(LOWER, sizeof(LOWER) / sizeof(char), c);
 }
 
+std::string Util::RemoveAllSpaces(std::string str) {
+    std::string newstr;
+    for (int i = 0; i < str.length(); i++) {
+        if (str[i] != ' ') newstr += str[i];
+    }
+    return newstr;
+}
+
 bool Util::EqualsIgnoreCase(std::string a, std::string b) {
     return ToLower(a) == ToLower(b);
 }

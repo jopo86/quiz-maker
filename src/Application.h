@@ -1,12 +1,12 @@
 #pragma once
 
-#define VERSION "0.5.0 (release candidate)"
+#define VERSION "1.0.0"
 
 #include <iostream>
 #include <string>
 
 #include "CommandHandler.h"
-#include "Console.h"
+#include "Console.h"  
 #include "Quiz.h"
 #include "Command.h"
 #include "QMS.h"
