@@ -1,6 +1,6 @@
 #pragma once
 
-#define VERSION "1.0.1"
+#define VERSION 102
 
 #include <iostream>
 #include <string>
@@ -17,6 +17,8 @@ private:
     static std::string dir;
     static Quiz workingQuiz;
     static std::string lastCommand;
+
+    static std::string GetVersionStr();
 
     static void PollCommand();
     static void RunCommand(Command command);
