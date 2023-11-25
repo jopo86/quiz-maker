@@ -668,7 +668,7 @@ void Application::TakeQuiz() {
             else {
                 Console::SetColor(Console::RED);
                 Console::Print("Incorrect! Enter to continue.\n");
-                if (workingQuiz.showsCorrectAnswer()) Console::Print("Correct Answer: " + q.getAnswer() + "\n");
+                if (workingQuiz.showsCorrectAnswer()) Console::Print("(Correct Answer: " + q.getAnswer() + "\n)");
                 Console::Input();
                 Console::Print("\n");
                 Console::Reset();
@@ -709,7 +709,7 @@ void Application::TakeQuiz() {
             else {
                 Console::SetColor(Console::RED);
                 Console::Print("Incorrect! Enter to continue.\n");
-                if (workingQuiz.showsCorrectAnswer()) Console::Print("Correct Answer: " + std::string(1, Util::NumToLetter(Util::Find(q.getChoices(), q.getAnswer()))) + ") " + q.getAnswer() + "\n");
+                if (workingQuiz.showsCorrectAnswer()) Console::Print("(Correct Answer: " + std::string(1, Util::NumToLetter(Util::Find(q.getChoices(), q.getAnswer()))) + ") " + q.getAnswer() + ")\n");
                 Console::Input();
                 Console::Print("\n");
                 Console::Reset();
