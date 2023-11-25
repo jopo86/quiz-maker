@@ -21,7 +21,7 @@ void Application::RunCommand(Command command) {
         return;
     }
 
-    if (!Util::EqualsIgnoreCase(command.getCmd(), "q")) lastCommand = command.getCmd();
+    if (!Util::EqualsIgnoreCase(command.getCmd(), "q") && !Util::EqualsIgnoreCase(command.getCmd(), "clr")) lastCommand = command.getCmd();
     CommandHandler::Run(command);
 }
 
@@ -410,6 +410,7 @@ void Application::ListQuestions(bool more) {
             }
             Console::Print("Answer: ");
             Console::SetColor(Console::CYAN);
+            if (_type == Question::MULTIPLE_CHOICE) Console::Print(std::string(1, Util::NumToLetter(Util::Find(q.getChoices(), q.getAnswer()))) + ") ");
             Console::Print(q.getAnswer() + "\n\n");
             Console::Reset();
         }
@@ -500,10 +501,17 @@ void Application::EditQuestion(bool q, bool c, bool a, int qNum) {
             Console::Reset();
             Console::Print("Enter new choices (type '-' when done): \n");
             std::string choice;
+            int i = 0;
             while (choice != "-") {
+                Console::Print(std::string(1, Util::NumToLetter(i)) + ") ");
                 choice = Console::Input();
                 if (choice != "-") {
                     newQuestion.addChoice(choice);
+                }
+                i++;
+                if (i >= 26) {
+                    Console::Print("Reached end of alphabet, no more choices allowed.\n");
+                    break;
                 }
             }
             SuccessMsg("Choices updated.\n");
@@ -620,10 +628,13 @@ void Application::TakeQuiz() {
 
     std::string header = Util::ToUpper(workingQuiz.getName());
     Console::SetColor(Console::MAGENTA);
-    Console::Print("\n" + header + "\n");
+    Console::Print("TAKING QUIZ: " + workingQuiz.getName() + "\n");
     Console::Reset();
-    Console::Print("\nEnter '[exit]' at any time to stop taking quiz.\n");
-    Console::Print("\n\n");
+    Console::Print("Hit enter after answering to continue to next question.\n");
+    Console::Print("Enter '[exit]' as an answer at any time to stop taking quiz.\n");
+    Console::Print("Hit enter now to continue.\n");
+    Console::Input();
+    Console::Print("\n");
 
     int qNum = 1;
     int score = 0;
@@ -645,15 +656,18 @@ void Application::TakeQuiz() {
             }
             if (q.check(answer)) {
                 Console::SetColor(Console::GREEN);
-                Console::Print("Correct!\n\n");
+                Console::Print("Correct!\n");
+                Console::Input();
+                Console::Print("\n");
                 Console::Reset();
                 score++;
             }
             else {
                 Console::SetColor(Console::RED);
                 Console::Print("Incorrect!\n");
-                if (workingQuiz.showsCorrectAnswer()) Console::Print("Correct Answer: " + q.getAnswer() + "\n\n");
-                else Console::Print("\n");
+                if (workingQuiz.showsCorrectAnswer()) Console::Print("Correct Answer: " + q.getAnswer() + "\n");
+                Console::Input();
+                Console::Print("\n");
                 Console::Reset();
             }
         }
@@ -668,7 +682,7 @@ void Application::TakeQuiz() {
 
         enter_choice:
             Console::Reset();
-            Console::Print("Enter (letter) choice: ");
+            Console::Print("\nEnter (letter) choice: ");
             std::string response = Console::Input();
             if (Util::RemoveAllSpaces(response) == "[exit]")  {
                 Console::Print("\n");
@@ -683,15 +697,18 @@ void Application::TakeQuiz() {
             }
             if (q.check(q.getChoices()[numChoice])) {
                 Console::SetColor(Console::GREEN);
-                Console::Print("Correct!\n\n");
+                Console::Print("Correct!\n");
+                Console::Input();
+                Console::Print("\n");
                 Console::Reset();
                 score++;
             }
             else {
                 Console::SetColor(Console::RED);
                 Console::Print("Incorrect!\n");
-                if (workingQuiz.showsCorrectAnswer()) Console::Print("Correct Answer: " + std::string(1, Util::NumToLetter(Util::Find(q.getChoices(), q.getAnswer()))) + ") " + q.getAnswer() + "\n\n");
-                else Console::Print("\n");
+                if (workingQuiz.showsCorrectAnswer()) Console::Print("Correct Answer: " + std::string(1, Util::NumToLetter(Util::Find(q.getChoices(), q.getAnswer()))) + ") " + q.getAnswer() + "\n");
+                Console::Input();
+                Console::Print("\n");
                 Console::Reset();
             }
         }
@@ -707,15 +724,18 @@ void Application::TakeQuiz() {
             char ans = Util::ToLower(response[0]);
             if (q.check({ ans })) {
                 Console::SetColor(Console::GREEN);
-                Console::Print("Correct!\n\n");
+                Console::Print("Correct!\n");
+                Console::Input();
+                Console::Print("\n");
                 Console::Reset();
                 score++;
             }
             else {
                 Console::SetColor(Console::RED);
                 Console::Print("Incorrect!\n");
-                if (workingQuiz.showsCorrectAnswer()) Console::Print("Correct Answer: " + q.getAnswer() + "\n\n");
-                else Console::Print("\n");
+                if (workingQuiz.showsCorrectAnswer()) Console::Print("Correct Answer: " + q.getAnswer() + "\n");
+                Console::Input();
+                Console::Print("\n");
                 Console::Reset();
             }
         }

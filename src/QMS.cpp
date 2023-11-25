@@ -50,7 +50,7 @@ std::pair<Quiz, int> QMS::Load(std::string path) {
 
         if (i == firstLine) {
             quiz.setName(lines[i]);
-            quiz.setShowCorrectAnswer(lines[i] == "scat");
+            quiz.setShowCorrectAnswer(lines[i + 1] == "scat");
         }
         else if (lines[i] == "^") {
             int j = i + 1;
