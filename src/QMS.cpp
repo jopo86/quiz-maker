@@ -43,7 +43,7 @@ std::pair<Quiz, int> QMS::Load(std::string path) {
     std::vector<std::string> lines = Util::Split(contents, '\n');
     int firstLine = 0;
     for (int i = 0; i < lines.size(); i++) {
-        if (Util::Contains(lines[i], '#') || lines[i] == "") {
+        if (Util::RemoveAllSpaces(lines[i])[0] == '#' || lines[i] == "") {
             firstLine++;
             continue;
         }
