@@ -1,6 +1,6 @@
 #pragma once
 
-#define VERSION 102
+#define VERSION 103
 
 #include <iostream>
 #include <string>
