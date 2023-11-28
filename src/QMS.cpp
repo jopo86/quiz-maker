@@ -26,7 +26,14 @@ std::string QMS::Save(Quiz quiz, std::string _path) {
             }
             contents += "-\n";
         }
-        contents += q.getAnswer() + "\n";
+        if (q.getType() == Question::WRITTEN) {
+            contents += "-\n";
+            for (int j = 0; j < q.getAnswers().size(); j++) {
+                contents += q.getAnswers()[j] + "\n";
+            }
+            contents += "-\n";
+        }
+        else contents += q.getAnswer() + "\n";
     }
 
     Util::WriteFile(contents, path);
@@ -69,6 +76,18 @@ std::pair<Quiz, int> QMS::Load(std::string path) {
                 std::string answer = lines[j];
                 Question q(Question::MULTIPLE_CHOICE, question, answer);
                 q.setChoices(choices);
+                quiz.addQuestion(q);
+            }
+            else if (type == "wr") {
+                j++;
+                std::vector<std::string> answers;
+                while (lines[j] != "-") {
+                    answers.push_back(lines[j]);
+                    j++;
+                }
+                Question q(Question::WRITTEN);
+                q.setQuestion(question);
+                q.setAnswers(answers);
                 quiz.addQuestion(q);
             }
             else {

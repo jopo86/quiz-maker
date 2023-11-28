@@ -45,6 +45,11 @@ public:
 
     static bool Contains(std::string str, char c);
     static bool Contains(std::string str, std::string substr);
+    static bool ContainsIgnoreCase(std::vector<std::string> vec, std::string str);
+    static bool ContainsIgnoreCaseAndSpace(std::vector<std::string> vec, std::string str);
+
+    static bool EqualsIgnoreCase(std::string a, std::string b);
+    static bool EqualsIgnoreCaseAndSpace(std::string a, std::string b);
 
     static bool IsLower(const char c);
     static bool IsUpper(const char c);
@@ -66,7 +71,6 @@ public:
 
     static std::string RemoveAllSpaces(std::string str);
 
-    static bool EqualsIgnoreCase(std::string a, std::string b);
 
     static std::string Substr(std::string str, int start, int end);
     static std::vector<std::string> Split(std::string str, char delim);

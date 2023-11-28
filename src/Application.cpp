@@ -52,7 +52,7 @@ void Application::Start() {
     dir = "";
     Console::Clear();
     Console::SetColor(Console::CYAN);
-    std::string title = "       Quiz Maker v" + GetVersionStr() + "       ";
+    std::string title = "          Quiz Maker v" + GetVersionStr() + "          ";
     std::string bar;
     for (int i = 0; i < title.length(); i++) {
         bar += "=";
@@ -206,8 +206,14 @@ void Application::AddQuestion(const int type) {
             Question wq(Question::WRITTEN);
             Console::Print("Enter Question: ");
             wq.setQuestion(Console::Input());
-            Console::Print("Enter answer: ");
-            wq.setAnswer(Console::Input());
+            Console::Print("Enter answers (type '-' when done):\n");
+            std::string answer;
+            while (answer != "-") {
+                answer = Console::Input();
+                if (answer != "-") {
+                    wq.addAnswer(answer);
+                }
+            }
             workingQuiz.addQuestion(wq);
             break;
         }
@@ -240,6 +246,8 @@ void Application::AddQuestion(const int type) {
             i = Util::LetterToNum(response);
             if (i >= mcq.getChoices().size()) {
                 Err("choice '" + std::string(1, response) + "' does not exist. (aborted)", false);
+                PollCommand();
+                return;
             }
             std::string ans = mcq.getChoices()[i];
             mcq.setAnswer(ans);
@@ -318,8 +326,14 @@ void Application::InsertQuestion(const int type) {
             q = Question(Question::WRITTEN);
             Console::Print("Enter Question: ");
             q.setQuestion(Console::Input());
-            Console::Print("Enter answer: ");
-            q.setAnswer(Console::Input());
+            Console::Print("Enter answers (type '-' when done):\n");
+            std::string answer;
+            while (answer != "-") {
+                answer = Console::Input();
+                if (answer != "-") {
+                    q.addAnswer(answer);
+                }
+            }
             break;
         }
         case Question::MULTIPLE_CHOICE: {
@@ -412,11 +426,22 @@ void Application::ListQuestions(bool more) {
                 }
                 Console::Reset();
             }
-            Console::Print("Answer: ");
-            Console::SetColor(Console::CYAN);
-            if (_type == Question::MULTIPLE_CHOICE) Console::Print(std::string(1, Util::NumToLetter(Util::Find(q.getChoices(), q.getAnswer()))) + ") ");
-            Console::Print(q.getAnswer() + "\n\n");
-            Console::Reset();
+            if (_type == Question::WRITTEN) {
+                Console::Print("Answers:\n");
+                Console::SetColor(Console::CYAN);
+                for (int j = 0; j < q.getAnswers().size(); j++) {
+                    Console::Print(q.getAnswers()[j] + "\n");
+                }
+                Console::Print("\n");
+                Console::Reset();
+            }
+            else {
+                Console::Print("Answer: ");
+                Console::SetColor(Console::CYAN);
+                if (_type == Question::MULTIPLE_CHOICE) Console::Print(std::string(1, Util::NumToLetter(Util::Find(q.getChoices(), q.getAnswer()))) + ") ");
+                Console::Print(q.getAnswer() + "\n\n");
+                Console::Reset();
+            }
         }
     }
     if (!more) Console::Print("\n");
@@ -525,13 +550,32 @@ void Application::EditQuestion(bool q, bool c, bool a, int qNum) {
         }
 
         if (a) {
-            Console::Print("\nOld answer: ");
-            Console::SetColor(Console::CYAN);
-            Console::Print(oldQuestion.getAnswer());
-            Console::Reset();
-            Console::Print("\nEnter new answer: ");
-            newQuestion.setAnswer(Console::Input());
-            SuccessMsg("Answer updated.\n");
+            if (newQuestion.getType() != Question::WRITTEN) {
+                Console::Print("\nOld answer: ");
+                Console::SetColor(Console::CYAN);
+                Console::Print(oldQuestion.getAnswer());
+                Console::Reset();
+                Console::Print("\nEnter new answer: ");
+                newQuestion.setAnswer(Console::Input());
+                SuccessMsg("Answer updated.\n");
+            }
+            else {
+                Console::Print("\nOld answers:\n");
+                Console::SetColor(Console::CYAN);
+                for (int j = 0; j < oldQuestion.getAnswers().size(); j++) {
+                    Console::Print(oldQuestion.getAnswers()[j] + "\n");
+                }
+                Console::Reset();
+                Console::Print("\nEnter new answers (type '-' when done):\n");
+                std::string answer;
+                while (answer != "-") {
+                    answer = Console::Input();
+                    if (answer != "-") {
+                        newQuestion.addAnswer(answer);
+                    }
+                }
+                SuccessMsg("Answers updated.\n");
+            }
         }
         else newQuestion.setAnswer(oldQuestion.getAnswer());
 
@@ -668,7 +712,14 @@ void Application::TakeQuiz() {
             else {
                 Console::SetColor(Console::RED);
                 Console::Print("Incorrect! Enter to continue.\n");
-                if (workingQuiz.showsCorrectAnswer()) Console::Print("(Correct Answer: " + q.getAnswer() + "\n)");
+                if (workingQuiz.showsCorrectAnswer()) { 
+                    Console::Print("[Correct Answer(s): ");
+                    for (int i = 0; i < q.getAnswers().size(); i++) {
+                        Console::Print("'" +  q.getAnswers()[i] + "'");
+                        if (i != q.getAnswers().size() - 1) Console::Print(", ");
+                    }
+                    Console::Print("]\n");
+                }
                 Console::Input();
                 Console::Print("\n");
                 Console::Reset();
@@ -709,7 +760,7 @@ void Application::TakeQuiz() {
             else {
                 Console::SetColor(Console::RED);
                 Console::Print("Incorrect! Enter to continue.\n");
-                if (workingQuiz.showsCorrectAnswer()) Console::Print("(Correct Answer: " + std::string(1, Util::NumToLetter(Util::Find(q.getChoices(), q.getAnswer()))) + ") " + q.getAnswer() + ")\n");
+                if (workingQuiz.showsCorrectAnswer()) Console::Print("[Correct Answer: " + std::string(1, Util::NumToLetter(Util::Find(q.getChoices(), q.getAnswer()))) + ") " + q.getAnswer() + "]\n");
                 Console::Input();
                 Console::Print("\n");
                 Console::Reset();
@@ -736,7 +787,7 @@ void Application::TakeQuiz() {
             else {
                 Console::SetColor(Console::RED);
                 Console::Print("Incorrect! Enter to continue.\n");
-                if (workingQuiz.showsCorrectAnswer()) Console::Print("(Correct Answer: " + q.getAnswer() + ")\n");
+                if (workingQuiz.showsCorrectAnswer()) Console::Print("[Correct Answer: " + q.getAnswer() + "]\n");
                 Console::Input();
                 Console::Print("\n");
                 Console::Reset();

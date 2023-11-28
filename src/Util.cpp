@@ -31,6 +31,28 @@ bool Util::Contains(std::string str, std::string substr) {
     return Find(str, substr) != -1;
 }
 
+bool Util::ContainsIgnoreCase(std::vector<std::string> vec, std::string str) {
+    for (std::string _str : vec) {
+        if (EqualsIgnoreCase(_str, str)) return true;
+    }
+    return false;
+}
+
+bool Util::ContainsIgnoreCaseAndSpace(std::vector<std::string> vec, std::string str) {
+    for (std::string _str : vec) {
+        if (EqualsIgnoreCase(RemoveAllSpaces(_str), RemoveAllSpaces(str))) return true;
+    }
+    return false;
+}
+
+bool Util::EqualsIgnoreCase(std::string a, std::string b) {
+    return ToLower(a) == ToLower(b);
+}
+
+bool Util::EqualsIgnoreCaseAndSpace(std::string a, std::string b) {
+    return ToLower(RemoveAllSpaces(a)) == ToLower(RemoveAllSpaces(b));
+}
+
 bool Util::IsLower(const char c) {
     return Contains(LOWER, sizeof(LOWER) / sizeof(char), c);
 }
@@ -111,10 +133,6 @@ std::string Util::RemoveAllSpaces(std::string str) {
         if (str[i] != ' ') newstr += str[i];
     }
     return newstr;
-}
-
-bool Util::EqualsIgnoreCase(std::string a, std::string b) {
-    return ToLower(a) == ToLower(b);
 }
 
 std::string Util::Substr(std::string str, int start, int end) {

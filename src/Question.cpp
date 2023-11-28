@@ -5,6 +5,7 @@ Question::Question(int type) {
 	question = "";
 	answer = "";
 	choices = {};
+	answers = {};
 }
 
 Question::Question(int type, std::string question, std::string answer) {
@@ -12,6 +13,7 @@ Question::Question(int type, std::string question, std::string answer) {
 	this->question = question;
 	this->answer = answer;
 	choices = {};
+	answers = {};
 }
 
 void Question::setQuestion(std::string question) {
@@ -20,6 +22,16 @@ void Question::setQuestion(std::string question) {
 
 void Question::setAnswer(std::string answer) {
 	this->answer = answer;
+}
+
+void Question::setAnswers(std::vector<std::string> answers) {
+	if (type != WRITTEN) throw "Cannot have multiple answers, question is not written";
+	this->answers = answers;
+}
+
+void Question::addAnswer(std::string answer) {
+	if (type != WRITTEN) throw "Cannot have multiple answers, question is not written";
+	answers.push_back(answer);
 }
 
 void Question::setChoices(std::vector<std::string> choices) {
@@ -44,12 +56,18 @@ std::string Question::getAnswer() {
 	return answer;
 }
 
+std::vector<std::string> Question::getAnswers() {
+	if (type != WRITTEN) throw "Cannot get multiple answers, question is not written";
+	return answers;
+}
+
 std::vector<std::string> Question::getChoices() {
 	return choices;
 }
 
 bool Question::check(std::string answer) {
-	return Util::EqualsIgnoreCase(Util::RemoveAllSpaces(this->answer), Util::RemoveAllSpaces(answer));
+	if (type != WRITTEN) return Util::EqualsIgnoreCaseAndSpace(this->answer, answer);
+	return Util::ContainsIgnoreCaseAndSpace(answers, answer);
 }
 
 bool Question::isChoice(std::string choice) {
