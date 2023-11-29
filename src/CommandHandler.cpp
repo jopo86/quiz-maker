@@ -55,7 +55,7 @@ const std::map<std::string, std::vector<std::string>> CommandHandler::VALID_ARGS
     { "delq",    { "" } },
     { "swapq",   { "" } },
     { "take",    { "" } },
-    { "save",    { "" } },
+    { "save",    { "new" } },
     { "load",    { "" } }
 };
 
@@ -183,8 +183,7 @@ void CommandHandler::Run(Command command) {
         else Application::InsertQuestion();	
     }
     else if (cmd == "listq") {
-        if (command.hasArg("more")) Application::ListQuestions(true);
-        else Application::ListQuestions(false);
+        Application::ListQuestions(command.hasArg("more"));
     }
     else if (cmd == "editq") {
         Application::EditQuestion(command.hasArg("q"), command.hasArg("c"), command.hasArg("a"), -1);
@@ -199,7 +198,7 @@ void CommandHandler::Run(Command command) {
         Application::TakeQuiz();
     }
     else if (cmd == "save") {
-        Application::SaveQuiz();
+        Application::SaveQuiz(command.hasArg("new"));
     }
     else if (cmd == "load") {
         Application::LoadQuiz();

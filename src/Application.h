@@ -50,7 +50,7 @@ public:
     static void DeleteQuestion();
     static void SwapQuestions();
     static void TakeQuiz();
-    static void SaveQuiz();
+    static void SaveQuiz(bool newSave);
     static void LoadQuiz();
     static void Root();
     static void Clr();

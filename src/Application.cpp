@@ -119,7 +119,7 @@ void Application::HelpMore() {
     Console::Print("|     swapq       |       swap 2 questions        |         -        |                    -                     |     Quiz    |\n");
     Console::Print("|      take       |           take quiz           |         -        |                    -                     |     Quiz    |\n");
     Console::Print("|      clr        |          clear screen         |         -        |                    -                     |     Root    |\n");
-    Console::Print("|      save       |       save quiz to path       |         -        |                    -                     |     Quiz    |\n");
+    Console::Print("|      save       |       save quiz to path       |       -new       |             save to new file             |     Quiz    |\n");
     Console::Print("|      load       |      load quiz from path      |         -        |                    -                     |     Root    |\n");
     Console::Print("|                 |                               |                  |                                          |             |\n");
     Console::Print("-------------------------------------------------------------------------------------------------------------------------------\n");
@@ -802,11 +802,24 @@ void Application::TakeQuiz() {
     PollCommand();
 }
 
-void Application::SaveQuiz() {
-    Console::Print("Save As: ");
-    std::string path = Console::Input();
-    path = QMS::Save(workingQuiz, path);
-    SuccessMsg("Quiz saved to '" + path + "'.\n\n");
+void Application::SaveQuiz(bool newSave) {
+    if (newSave) {
+        Console::Print("Save As: ");
+        std::string path = Console::Input();
+        path = QMS::Save(workingQuiz, path);
+        workingPath = path;
+        SuccessMsg("Quiz saved to '" + workingPath + "'.\n\n");
+    }
+    else {
+        if (workingPath == "") {
+            Err("no current path to save to. (aborted)\nUse 'save -new' to save to a new file.\n\n", false);
+            PollCommand();
+            return;
+        }
+        QMS::Save(workingQuiz, workingPath);
+        SuccessMsg("Changes saved to '" + workingPath + "'.\n\n");
+    }
+
     PollCommand();
 }
 
@@ -827,6 +840,7 @@ void Application::LoadQuiz() {
     workingQuiz = loadpair.first;
     dir = "Quiz";
     SuccessMsg("Quiz loaded from '" + path + "'.\n\n");
+    workingPath = path;
     PollCommand();
 }
 
@@ -844,7 +858,7 @@ void Application::Root() {
         PollCommand();
     }
     else {
-        Err("unrecognized response '" + response + "\n\n", false);
+        Err("unrecognized response '" + response + "'\n\n", false);
         PollCommand();
     }
 }
