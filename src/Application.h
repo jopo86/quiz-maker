@@ -16,6 +16,7 @@ private:
 
     static std::string dir;
     static Quiz workingQuiz;
+    static std::string workingPath;
     static std::string lastCommand;
 
     static std::string GetVersionStr();
