@@ -161,14 +161,14 @@ void Application::CreateQuiz() {
 }
 
 void Application::SetSCA() {
+yn_sca:
     Console::Print("Show correct answer when incorrect? (y/n): ");
     char response = Util::ToLower(Console::Input()[0]);
     if (response == 'y') workingQuiz.setShowCorrectAnswer(true);
     else if (response == 'n') workingQuiz.setShowCorrectAnswer(false);
     else {
-        Err("unrecognized response: '" + std::string(1, response) + "'\n\n", false);
-        PollCommand();
-        return;
+        Err("unrecognized response: '" + std::string(1, response) + "', re-enter.\n", false);
+        goto yn_sca;
     }
     Console::Print("\n");
     PollCommand();
@@ -184,6 +184,7 @@ void Application::RenameQuiz() {
 
 void Application::AddQuestion() {
     Console::Reset();
+addq_type:
     Console::Print("Enter Question type ('mc' for multiple choice, 'wr' for written, 'tf' for true/false): ");
     std::string type = Console::Input();
     if (Util::EqualsIgnoreCase(type, "wr")) {
@@ -196,9 +197,8 @@ void Application::AddQuestion() {
         AddQuestion(Question::TRUE_FALSE);
     }
     else {
-        Err("unrecognized response: '" + type + "'. (aborted)\n\n", false);
-        PollCommand();
-        return;
+        Err("unrecognized response: '" + type + "', re-enter.\n", false);
+        goto addq_type;
     }
 }
 
@@ -238,18 +238,18 @@ void Application::AddQuestion(const int type) {
                     break;
                 }
             }
+
+        enter_ans_choice_addq:
             Console::Print("Enter correct (letter) choice: ");
             char response = Util::ToLower(Console::Input()[0]);
             if (!Util::IsLetter(response)) {
-                Err("'" + std::string(1, response) + "' is not a letter. (aborted)\n\n", false);
-                PollCommand();
-                return;
+                Err("'" + std::string(1, response) + "' is not a letter, re-enter.\n", false);
+                goto enter_ans_choice_addq;
             }
             i = Util::LetterToNum(response);
             if (i >= mcq.getChoices().size()) {
-                Err("choice '" + std::string(1, response) + "' does not exist. (aborted)\n\n", false);
-                PollCommand();
-                return;
+                Err("choice '" + std::string(1, response) + "' does not exist, re-enter.\n", false);
+                goto enter_ans_choice_addq;
             }
             std::string ans = mcq.getChoices()[i];
             mcq.setAnswer(ans);
@@ -260,12 +260,13 @@ void Application::AddQuestion(const int type) {
             Question tfq(Question::TRUE_FALSE);
             Console::Print("Enter Question: ");
             tfq.setQuestion(Console::Input());
+            
+        enter_ans_tf_addq:
             Console::Print("Enter answer (T/F): ");
             const char ans = Util::ToLower(Console::Input()[0]);
             if (!(ans == 't' || ans == 'f')) {
-                Err("response must start with T/t or F/f. (aborted)\n\n", false);
-                PollCommand();
-                return;
+                Err("response must start with T/t or F/f, re-enter.\n", false);
+                goto enter_ans_tf_addq;
             }
             tfq.setAnswer({ ans });
             workingQuiz.addQuestion(tfq);
@@ -279,6 +280,8 @@ void Application::AddQuestion(const int type) {
 
 void Application::InsertQuestion() {
     Console::Reset();
+
+insq_type:
     Console::Print("Enter Question type ('mc' for multiple choice, 'wr' for written, 'tf' for true/false): ");
     std::string type = Console::Input();
     if (Util::EqualsIgnoreCase(type, "wr")) {
@@ -291,9 +294,8 @@ void Application::InsertQuestion() {
         InsertQuestion(Question::TRUE_FALSE);
     }
     else {
-        Err("unrecognized response: '" + type + "'. (aborted)\n\n", false);
-        PollCommand();
-        return;
+        Err("unrecognized response: '" + type + "', re-enter.\n", false);
+        goto insq_type;
     }
 }
 
@@ -306,13 +308,13 @@ void Application::InsertQuestion(const int type) {
         return;
     }
 
+insq_qnum:
     Console::Print("Question # to insert to (use 'listq' to see question #s): ");
     std::string response = Console::Input();
     std::string verif = VerifyQuestionNumInput(response);
     if (verif != "") {
-        Err(verif + " (aborted)\n\n", false);
-        PollCommand();
-        return;
+        Err(verif + ", re-enter.\n", false);
+        goto insq_qnum;
     }
     
     int qNum = std::stoi(response);
@@ -353,16 +355,18 @@ void Application::InsertQuestion(const int type) {
                 }
                 i++;
             }
+
+        enter_ans_choice_insq:
             Console::Print("Enter correct (letter) choice: ");
             char response = Util::ToLower(Console::Input()[0]);
             if (!Util::IsLetter(response)) {
-                Err("'" + std::string(1, response) + "' is not a letter. (aborted)\n\n", false);
-                PollCommand();
-                return;
+                Err("'" + std::string(1, response) + "' is not a letter, re-enter.\n", false);
+                goto enter_ans_choice_insq;
             }
             i = Util::LetterToNum(response);
             if (i >= q.getChoices().size()) {
-                Err("choice '" + std::string(1, response) + "' does not exist. (aborted)\n\n", false);
+                Err("choice '" + std::string(1, response) + "' does not exist, re-enter.\n", false);
+                goto enter_ans_choice_insq;
             }
             std::string ans = q.getChoices()[i];
             q.setAnswer(ans);
@@ -372,11 +376,13 @@ void Application::InsertQuestion(const int type) {
             q = Question(Question::TRUE_FALSE);
             Console::Print("Enter Question: ");
             q.setQuestion(Console::Input());
+
+        enter_ans_tf_insq:
             Console::Print("Enter answer (T/F): ");
             const char ans = Util::ToLower(Console::Input()[0]);
             if (!(ans == 't' || ans == 'f')) {
-                Err("response must start with T/t or F/f. (aborted)\n\n", false);
-                return;
+                Err("response must start with T/t or F/f, re-enter.\n", false);
+                goto enter_ans_tf_insq;
             }
             q.setAnswer({ ans });
             break;
@@ -460,11 +466,12 @@ void Application::EditQuestion(bool q, bool c, bool a, int qNum) {
     }
 
     if (qNum == -1) {
+    editq_qnum:
         Console::Print("Question # to edit (use 'listq' to see question #s): ");
         std::string response = Console::Input();
         if (response == "" || !Util::IsNumber(response)) {
-            Err("'" + response + "' is not a number. (aborted)\n\n", false);
-            return;
+            Err("'" + response + "' is not a number, re-enter.\n", false);
+            goto editq_qnum;
         }
         qNum = std::stoi(response);
     }
@@ -604,16 +611,15 @@ void Application::DeleteQuestion() {
         return;
     }
 
+delq_qnum:
     Console::Print("Question # to delete (use 'listq' to see question #s): ");
     std::string response = Console::Input();
     std::string verif = VerifyQuestionNumInput(response);
     if (verif != "") {
-        Err(verif + " (aborted)\n\n", false);
-        PollCommand();
-        return;
+        Err(verif + ", re-enter.\n", false);
+        goto delq_qnum;
     }
     int qNum = std::stoi(response);
-    
 
     std::vector<Question> oldQuestions = workingQuiz.getQuestions();
     std::vector<Question> newQuestions;
@@ -626,23 +632,36 @@ void Application::DeleteQuestion() {
 }
 
 void Application::SwapQuestions() {
+    Console::Reset();
+
+    if (workingQuiz.getQuestions().size() == 0) {
+        Console::Print("Quiz has no questions.\n\n");
+        PollCommand();
+        return;
+    }
+    else if (workingQuiz.getQuestions().size() == 1) {
+        Console::Print("Quiz only has 1 question.\n\n");
+        PollCommand();
+        return;
+    }
+
+editq_qnum1:
     Console::Print("Swap question #");
     std::string response = Console::Input();
     std::string verif = VerifyQuestionNumInput(response);
     if (verif != "") {
-        Err(verif + " (aborted)\n\n", false);
-        PollCommand();
-        return;
+        Err(verif + ", re-enter.\n", false);
+        goto editq_qnum1;
     }
     int num1 = std::stoi(response);
 
+editq_qnum2:
     Console::Print("with question #");
     response = Console::Input();
     verif = VerifyQuestionNumInput(response);
     if (verif != "") {
-        Err(verif + " (aborted)\n\n", false);
-        PollCommand();
-        return;
+        Err(verif + ", re-enter.\n", false);
+        goto editq_qnum2;
     }
     int num2 = std::stoi(response);
 
@@ -735,10 +754,10 @@ void Application::TakeQuiz() {
                 Console::Print(std::string(1, Util::NumToLetter(j)) + ") " + q.getChoices()[j] + "\n");
             }
             Console::Reset();
+            Console::Print("\n");
 
-        enter_choice:
-            Console::Reset();
-            Console::Print("\nEnter (letter) choice: ");
+        enter_choice_take_quiz:
+            Console::Print("Enter (letter) choice: ");
             std::string response = Console::Input();
             if (Util::RemoveAllSpaces(response) == "[exit]")  {
                 Console::Print("\n");
@@ -748,8 +767,8 @@ void Application::TakeQuiz() {
             char letterChoice = response[0];
             int numChoice = Util::LetterToNum(letterChoice);
             if (numChoice >= q.getChoices().size() || numChoice == -1) {
-                Err("choice does not exist, re-enter.", false);
-                goto enter_choice;
+                Err("choice does not exist, re-enter.\n", false);
+                goto enter_choice_take_quiz;
             }
             if (q.check(q.getChoices()[numChoice])) {
                 Console::SetColor(Console::GREEN);
@@ -770,6 +789,7 @@ void Application::TakeQuiz() {
         }
 
         else if (q.getType() == Question::TRUE_FALSE) {
+        enter_tf_take_quiz:
             Console::Print("Enter answer (T/F): ");
             std::string response = Console::Input();
             if (Util::RemoveAllSpaces(response) == "[exit]")  {
@@ -778,6 +798,10 @@ void Application::TakeQuiz() {
                 return;
             }
             char ans = Util::ToLower(response[0]);
+            if (!(ans == 't' || ans == 'f')) {
+                Err("response must start with T/t or F/f, re-enter.\n", false);
+                goto enter_tf_take_quiz;
+            }
             if (q.check({ ans })) {
                 Console::SetColor(Console::GREEN);
                 Console::Print("Correct! Enter to continue.\n");
@@ -824,13 +848,13 @@ void Application::SaveQuiz(bool newSave) {
 }
 
 void Application::LoadQuiz() {
+enter_load_path:
     Console::Print("Path: ");
     std::string path = Console::Input();
     std::pair<Quiz, int> loadpair = QMS::Load(path);
     if (loadpair.second == QMS::FILE_NOT_QMS) {
-        Err("not a .qms file. (aborted)\n\n", false);
-        PollCommand();
-        return;
+        Err("not a .qms file, re-enter.\n", false);
+        goto enter_load_path;
     }
     else if (loadpair.second == QMS::FILE_NOT_FOUND) {
         Err("path '" + path + "' not found. (aborted)\n\n", false);
@@ -845,6 +869,13 @@ void Application::LoadQuiz() {
 }
 
 void Application::Root() {
+    if (dir == "") {
+        Err("already in root directory. (aborted)\n\n", false);
+        PollCommand();
+        return;
+    }
+
+yn_root:
     Console::Print("Are you sure you want to go back to root directory? Progress may be lost. (y/n): ");
     std::string response = Console::Input();
     if (response == "y") {
@@ -858,8 +889,8 @@ void Application::Root() {
         PollCommand();
     }
     else {
-        Err("unrecognized response '" + response + "'\n\n", false);
-        PollCommand();
+        Err("unrecognized response '" + response + "', re-enter.\n", false);
+        goto yn_root;
     }
 }
 
@@ -877,6 +908,7 @@ void Application::Err(std::string msg, bool fatal) {
     }
     else {
         Console::Print("ERROR: " + msg);
+        Console::Reset();
     }
 }
 
